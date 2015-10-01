@@ -8,26 +8,28 @@ public class EchoClient : TcpClient
 {
     static StreamWriter swriter = null;
     static StreamReader sreader = null;
+    static List<EchoClient> clientlist = new List<EchoClient>();
+    static bool endreader = false;
+    private static object lockthis = new object();
 
-    //Echo client connects when constructor called
     public EchoClient(String host)
     {
-        //Uses the Connect method from TcpClient
-        //Echo protocol is thru port 7 on server
-        base.Connect(host, 7);
+        //must be the same port as the server
+        int port = 7;
+
+        base.Connect(host, port);
     }
 
     public void Reader ()
     {
-
-        String returndata = sreader.ReadLine();
-
-        while (returndata != "exit" )
+        //while the client is still alive, read for data
+        //if client has been closed, the reading will end
+        while (endreader != true )
         {
+            String returndata = sreader.ReadLine();
             Console.WriteLine(returndata);
             returndata = sreader.ReadLine();
         }
-            
 
     }
 
@@ -41,52 +43,50 @@ public class EchoClient : TcpClient
             //If no host specified, local machine is host
             String host = args.Length == 1 ? args[0] : "127.0.0.1";
 
-            //Connect to Echo server
+            //creates connection
             client = new EchoClient(host);
 
-            //Get the stream between server and client
+            //gets stream between server and client
             NetworkStream ns = client.GetStream();
 
-            //Create a user-friendly StreamWriter
+            //creates writer and reader
             swriter = new StreamWriter(ns);
-
-            //Create a user-friendly StreamReader
             sreader = new StreamReader(ns);
 
-            //Prompt user for message to send to server
-            //Period "exit" tells server to end session
+            //tells the user how to exit the chat properly 
+            Console.Write("Enter text: \"exit\" to leave the chat: \n");
+
+            //prompts the user the screen name for this client
             String input;
             Console.Write("Enter screen name: ");
 
+            //starts thread to read messages being sent from other clients
+            //from the server
             Thread readthread = new Thread(new ThreadStart(client.Reader));
             readthread.Start();
 
 
             while ((input = Console.ReadLine()) != "exit")
             {
-                //Send message to server
+                //sends the message to the sever to be sent to 
+                //other clients
                 swriter.WriteLine(input);
                 swriter.Flush();
-                
-                Console.Write("Enter text: \"exit\" to leave the chat: ");
             }
 
-            //Send final message and scram
-            swriter.WriteLine(".");
+            //tells the server that the client has left
+            swriter.WriteLine("exit");
             swriter.Flush();
+
+
+            //tell reader to stop reading
+            endreader = true;
 
         }
         catch (Exception e)
         {
             Console.WriteLine(e + " " + e.StackTrace);
         }
-        finally
-        {
-            //Close the connection whether exception thrown or not
-            if (swriter != null) swriter.Close();
-            if (sreader != null) sreader.Close();
-            if (client != null) client.Close();
-        }
-    }
 
+    }
 }

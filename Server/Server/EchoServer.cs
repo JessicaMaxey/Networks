@@ -41,14 +41,26 @@ public class EchoServer
                 //to keep names unique
                 else
                 {
-                    screenname = screenname + (namelist.Count + 1);
+                    screenname = screenname + "(" + (namelist.Count + 1) + ")";
                     namelist.Add(screenname);
                     input = ("Screen name already exsists, updated to " + screenname);
 
+                    //sends a message to only this client 
+                    lock (lockthis)
+                    {
+                        for (int i = 0; i < esnamelist.Count; i++)
+                        {
+                            if (esnamelist[i].Item1 == this)
+                            {
+                                esnamelist[i].Item1.Message(screenname, input);
+                            }
+                        }
+                    }
                 }
 
-                var es_name_enum = esnamelist.GetEnumerator();
 
+                //keeps track of the echoserver instances, updates the current instance with
+                //this clients screen name
                 for (int i= 0; i < esnamelist.Count; i++)
                 {
                     if(esnamelist[i].Item1 == this)
@@ -68,19 +80,8 @@ public class EchoServer
             while (input != "exit")
             {
                 Console.WriteLine(screenname + ": " + input);
-                swriter.WriteLine(input);
-                swriter.Flush();
 
-                lock (lockthis)
-                {
-                    for (int i = 0; i < esnamelist.Count; i++)
-                    {
-                        if (esnamelist[i].Item1 != this)
-                        {
-                            esnamelist[i].Item1.Message(screenname, input);
-                        }
-                    }
-                }
+                SendMessage(input, screenname);
 
                 input = sreader.ReadLine();
             }
@@ -89,11 +90,27 @@ public class EchoServer
             //because they are no longer active in the chat room
             lock(lockthis)
             {
+                for (int i = 0; i < esnamelist.Count; i++)
+                {
+                    if (esnamelist[i].Item1 == this)
+                    {
+                        esnamelist.Remove(esnamelist[i]);
+                    }
+                }
+
                 namelist.Remove(screenname);
+                
             }
 
             //sends out a message when the client leaves the room
+            input = (screenname + " left the chat room.");
+
+            //sends message to all clients that are connected
+            SendMessage(input, screenname);
+
             Console.WriteLine(screenname + " left the chat room.");
+
+            //closes the connection streams
             sreader.Close();
             swriter.Close();
             tcpclient.Close();
@@ -104,6 +121,7 @@ public class EchoServer
         }
         finally
         {
+            //closes the connection streams
             if (sreader != null) sreader.Close();
             if (swriter != null) swriter.Close();
             if (tcpclient != null) tcpclient.Close();
@@ -117,9 +135,24 @@ public class EchoServer
         swriter.Flush();
     }
 
+    public void SendMessage (string screenname, string input)
+    {
+        //locks the thread so no one else can use it while it
+        //is sending messages to everyone
+        lock (lockthis)
+        {
+            for (int i = 0; i < esnamelist.Count; i++)
+            {
+                if (esnamelist[i].Item1 != this)
+                {
+                    esnamelist[i].Item1.Message(screenname, input);
+                }
+            }
+        }
+    }
+
     public static void Main(String[] args)
     {
-
         TcpListener server = null;
 
         try
@@ -136,7 +169,7 @@ public class EchoServer
                 //gets the clients, will wait here listening for clients
                 EchoServer es = new EchoServer(server.AcceptTcpClient());
 
-                //stores the es to keep track of all the clients
+                //stores the es to keep track of all the clients instances
                 Tuple<EchoServer, string> new_es = new Tuple<EchoServer, string>(es, "");
                 esnamelist.Add(new_es);
 
