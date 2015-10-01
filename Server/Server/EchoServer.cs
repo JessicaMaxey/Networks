@@ -1,43 +1,37 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System;
 using System.Net.Sockets;
 using System.IO;
 using System.Threading;
-using System.Collections.Generic;
-
-
-//
-
 public class EchoServer
 {
+
+    StreamReader sreader = null;
+    StreamWriter swriter = null;
     TcpClient tcpclient = null;
-    List<string> namelist = new List<string>();
+    private static object lockthis = new object();
+    static List<string> namelist = new List<string>();
+    static List<Tuple<EchoServer, string>> esnamelist = new List<Tuple<EchoServer, string>>();
 
     public EchoServer(TcpClient tcpc) { tcpclient = tcpc; }
-    private static object lockthis = new object();
 
     public void Messaging()
     {
-        StreamReader sreader = null;
-        StreamWriter swriter = null;
-
         try
         {
-            ////Make a user-friendly StreamReader from the stream
+            Console.WriteLine("Connected... Getting screen name... ");
+
             sreader = new StreamReader(tcpclient.GetStream());
-     
-            ////Make a user-friendly StreamWriter from the stream
+
             swriter = new StreamWriter(tcpclient.GetStream());
-            string input = sreader.ReadLine();
+
             string screenname = "";
+            String input = sreader.ReadLine();
 
-            Console.WriteLine("Connected...");
-
-           
             //Lock the thread while name is added
             lock (lockthis)
             {
-                //Gets the name from the client
-                Console.WriteLine("Enter screen name: " + input);
+                //Gets the name from the client, which will be the first message they send through
                 screenname = input;
 
                 //checks to see if name is already in list
@@ -49,22 +43,57 @@ public class EchoServer
                 {
                     screenname = screenname + (namelist.Count + 1);
                     namelist.Add(screenname);
-                    Console.WriteLine("Screen name already exsists, updated to " + (screenname + (namelist.Count + 1)));
+                    input = ("Screen name already exsists, updated to " + screenname);
+
                 }
+
+                var es_name_enum = esnamelist.GetEnumerator();
+
+                for (int i= 0; i < esnamelist.Count; i++)
+                {
+                    if(esnamelist[i].Item1 == this)
+                    {
+                        esnamelist[i] = new Tuple<EchoServer, string>(esnamelist[i].Item1, screenname);
+                    }
+                }
+                
+                //sends out a message that the client has joined the room
+                input = (screenname + " has joined the chatroom");
+
             }
 
-            input = "";
 
+
+            //displays the message in the chat room
             while (input != "exit")
             {
                 Console.WriteLine(screenname + ": " + input);
                 swriter.WriteLine(input);
                 swriter.Flush();
-                Console.WriteLine(screenname + ": " + input);
+
+                lock (lockthis)
+                {
+                    for (int i = 0; i < esnamelist.Count; i++)
+                    {
+                        if (esnamelist[i].Item1 != this)
+                        {
+                            esnamelist[i].Item1.Message(screenname, input);
+                        }
+                    }
+                }
+
                 input = sreader.ReadLine();
             }
 
-            Console.WriteLine("Client connection exited");
+            //gets rid of the clients screenname when they leave the room
+            //because they are no longer active in the chat room
+            lock(lockthis)
+            {
+                namelist.Remove(screenname);
+            }
+
+            //sends out a message when the client leaves the room
+            Console.WriteLine(screenname + " left the chat room.");
             sreader.Close();
             swriter.Close();
             tcpclient.Close();
@@ -81,37 +110,39 @@ public class EchoServer
         }
     }
 
+    public void Message(string screenname, string input)
+    {
+        //displays the message in the other chat rooms
+        swriter.WriteLine(screenname + ": " + input);
+        swriter.Flush();
+    }
 
-    public static void Main(string[] args)
+    public static void Main(String[] args)
     {
 
         TcpListener server = null;
 
         try
         {
-            //Echo servers listen on port 7
             int portNumber = 7;
 
-            //Echo server first binds to port 7
             server = new TcpListener(portNumber);
-            //Server starts listening
+
             server.Start();
 
-            //Echo server loops forever, listening for clients
+            //loops listening for clients
             for (;;)
             {
-                //Accept the pending client connection and return a client 
-                //initialized for communication
-                //This method will block until a connection is made
+                //gets the clients, will wait here listening for clients
                 EchoServer es = new EchoServer(server.AcceptTcpClient());
 
-                //Allow this conversation to run in a new thread
-                Thread serverThread = new Thread(
-                    new ThreadStart(es.Messaging));
-                serverThread.Start();
+                //stores the es to keep track of all the clients
+                Tuple<EchoServer, string> new_es = new Tuple<EchoServer, string>(es, "");
+                esnamelist.Add(new_es);
 
-                //Loop back up and wait for another client
-                //Another thread is servicing this client
+                //creates threads
+                Thread serverThread = new Thread(new ThreadStart(es.Messaging));
+                serverThread.Start();
             }
         }
         catch (Exception e)
@@ -120,7 +151,6 @@ public class EchoServer
         }
         finally
         {
-            //Release the port and stop the server
             server.Stop();
         }
 
