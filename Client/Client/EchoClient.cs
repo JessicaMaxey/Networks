@@ -3,6 +3,10 @@ using System.Net.Sockets;
 using System.IO;
 using System.Collections.Generic;
 using System.Threading;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Text;
+
 
 public class EchoClient : TcpClient
 {
@@ -11,6 +15,44 @@ public class EchoClient : TcpClient
     static List<EchoClient> clientlist = new List<EchoClient>();
     static bool endreader = false;
     private static object lockthis = new object();
+    static bool exitSystem = false;
+
+    [DllImport("Kernel32")]
+    private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
+
+    private delegate bool EventHandler(CtrlType sig);
+    static EventHandler handler;
+
+    enum CtrlType
+    {
+        CTRL_C_EVENT = 0,
+        CTRL_BREAK_EVENT = 1,
+        CTRL_CLOSE_EVENT = 2,
+        CTRL_LOGOFF_EVENT = 5,
+        CTRL_SHUTDOWN_EVENT = 6
+    }
+
+    //shuts down chat room if the users chooses to exit the chatroom
+    //by not typing in exit to leave.
+    private static bool Handler(CtrlType sig)
+    {
+        Console.WriteLine("Exiting chat room... cleaning up threads...");
+
+        //tells the server that the client has left
+        swriter.WriteLine("exit");
+        swriter.Flush();
+
+        //tell reader to stop reading
+        endreader = true;
+
+        //allow main to run off
+        exitSystem = true;
+
+        //shutdown right away so there are no lingering threads
+        Environment.Exit(-1);
+
+        return true;
+    }
 
     public EchoClient(String host)
     {
@@ -39,6 +81,9 @@ public class EchoClient : TcpClient
 
         try
         {
+            handler += new EventHandler(Handler);
+            SetConsoleCtrlHandler(handler, true);
+
             //Host name comes from command line
             //If no host specified, local machine is host
             String host = args.Length == 1 ? args[0] : "127.0.0.1";
@@ -81,6 +126,12 @@ public class EchoClient : TcpClient
 
             //tell reader to stop reading
             endreader = true;
+
+            //holds the console while it cleans up from exiting without typing "exit"
+            while (!exitSystem)
+            {
+                Thread.Sleep(500);
+            }
 
         }
         catch (Exception e)
