@@ -8,7 +8,7 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text;
-
+using GUI_Client;
 
 public class EchoClient : TcpClient
 {

@@ -16,5 +16,15 @@ namespace GUI_Client
         {
             InitializeComponent();
         }
+
+        private void connect_btn_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void send_btn_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
