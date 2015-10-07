@@ -72,16 +72,18 @@
             // 
             // send_btn
             // 
+            this.send_btn.BackColor = System.Drawing.Color.WhiteSmoke;
             this.send_btn.Location = new System.Drawing.Point(631, 387);
             this.send_btn.Name = "send_btn";
             this.send_btn.Size = new System.Drawing.Size(75, 51);
             this.send_btn.TabIndex = 4;
             this.send_btn.Text = "send";
-            this.send_btn.UseVisualStyleBackColor = true;
+            this.send_btn.UseVisualStyleBackColor = false;
             this.send_btn.Click += new System.EventHandler(this.send_btn_Click);
             // 
             // Form1
             // 
+            this.AcceptButton = this.send_btn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Maroon;

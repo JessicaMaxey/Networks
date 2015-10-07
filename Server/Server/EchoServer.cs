@@ -45,17 +45,7 @@ public class EchoServer
                     namelist.Add(screenname);
                     input = ("Screen name already exsists, updated to " + screenname);
 
-                    //sends a message to only this client 
-                    lock (lockthis)
-                    {
-                        for (int i = 0; i < esnamelist.Count; i++)
-                        {
-                            if (esnamelist[i].Item1 == this)
-                            {
-                                esnamelist[i].Item1.Message(screenname, input);
-                            }
-                        }
-                    }
+                    EchoMessage(screenname, input);
                 }
 
 
@@ -79,9 +69,13 @@ public class EchoServer
             //displays the message in the chat room
             while (input != "exit")
             {
-                Console.WriteLine(screenname + ": " + input);
+                Console.WriteLine(screenname + ": " + input );
 
-                SendMessage(input, screenname);
+                //sends message out to everyone
+                SendMessage(screenname, input);
+                //sends the same massage back to client into their chatbox
+                //to see what they just wrote
+                EchoMessage(screenname, input);
 
                 input = sreader.ReadLine();
             }
@@ -106,7 +100,7 @@ public class EchoServer
             input = (screenname + " left the chat room.");
 
             //sends message to all clients that are connected
-            SendMessage(input, screenname);
+            SendMessage(screenname, input);
 
             Console.WriteLine(screenname + " left the chat room.");
 
@@ -146,6 +140,21 @@ public class EchoServer
                 if (esnamelist[i].Item1 != this)
                 {
                     esnamelist[i].Item1.Message(screenname, input);
+                }
+            }
+        }
+    }
+
+    public void EchoMessage (string screenname, string input)
+    {
+        //sends a message to only this client 
+        lock (lockthis)
+        {
+            for (int i = 0; i < esnamelist.Count; i++)
+            {
+                if (esnamelist[i].Item1 == this)
+                {
+                esnamelist[i].Item1.Message(screenname, input);
                 }
             }
         }
