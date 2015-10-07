@@ -41,6 +41,7 @@
             this.main_txtbx.Location = new System.Drawing.Point(12, 38);
             this.main_txtbx.Multiline = true;
             this.main_txtbx.Name = "main_txtbx";
+            this.main_txtbx.ReadOnly = true;
             this.main_txtbx.Size = new System.Drawing.Size(694, 323);
             this.main_txtbx.TabIndex = 0;
             // 
@@ -98,12 +99,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.TextBox main_txtbx;
         private System.Windows.Forms.TextBox server_address_txtbx;
         private System.Windows.Forms.TextBox message_txtbx;
         private System.Windows.Forms.Button connect_btn;
         public System.Windows.Forms.Button send_btn;
+        public System.Windows.Forms.TextBox main_txtbx;
     }
 }
 
