@@ -21,6 +21,7 @@ namespace GUI_Client
         static StreamReader sreader = null;
         TcpClient client;
         int port = 7;
+        bool exitwithoutconnecting = true;
         bool endthread = false;
         Thread readthread;
 
@@ -30,64 +31,74 @@ namespace GUI_Client
             InitializeComponent();
 
             //doesn't let the user send message until the connection is made
+            send_btn.ForeColor = Color.LightGray;
             send_btn.Enabled = false;
-            send_btn.BackColor = Color.Black;
-
-            try
-            {
-                client = new TcpClient();
-                string text;
 
 
-                //Greets the user with some instructions
-                text = ("Hello! First, please type in the host IP into the box above. \r\n");
-                main_txtbx.Text += text;
-
-                //prompts the user the screen name for this client
-                text = "Then, for your first message, please enter screen name. \r\n";
-                main_txtbx.Text += text;
-
-                //tells the user how to exit the chat properly 
-                text = ("To leave the chat, type \"exit\" to leave the chat. \r\n");
-                main_txtbx.Text += text;
+            client = new TcpClient();
+            string text;
 
 
+            //Greets the user with some instructions
+            text = ("Hello! First, please type in the host IP into the box above. \r\n");
+            main_txtbx.Text += text;
 
+            //prompts the user the screen name for this client
+            text = "Then, please enter screen name into the second box above. \r\n";
+            main_txtbx.Text += text;
 
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e + " " + e.StackTrace);
-            }
-
+            //tells the user how to exit the chat properly 
+            text = ("To leave the chat, type \"exit\" to leave the chat or click the \"X\" in the corner. \r\n");
+            main_txtbx.Text += text;
         }
 
         public void connect_btn_Click(object sender, EventArgs e)
         {
-            //Host name comes from command line
-            //If no host specified, local machine is host
-            String host = server_address_txtbx.Text;
-            client.Connect(host, port);
+            if (server_address_txtbx.Text.Length <= 15 && server_address_txtbx.Text.Length >= 7)
+            {
+                if (screenname_txtbx.Text != null && screenname_txtbx.Text != "")
+                {
+                    try
+                    {
+                        //Host name comes from command line
+                        //If no host specified, local machine is host
+                        String host = server_address_txtbx.Text;
+                        client.Connect(host, port);
+                        exitwithoutconnecting = false;
 
-            //lets you use the send button now that the connect has been made
-            send_btn.Enabled = true;
-            send_btn.BackColor = Color.WhiteSmoke;
-            server_address_txtbx.Enabled = false;
-            server_address_txtbx.BackColor = Color.Gray;
-            connect_btn.Enabled = false;
-            connect_btn.BackColor = Color.Black;
+                        //lets you use the send button now that the connect has been made
+                        send_btn.Enabled = true;
+                        send_btn.ForeColor = Color.Black;
+                        server_address_txtbx.Enabled = false;
+                        connect_btn.Enabled = false;
+                        connect_btn.ForeColor = Color.LightGray;
+                        screenname_txtbx.Enabled = false;
 
-            //gets stream between server and client
-            NetworkStream networkstream = client.GetStream();
 
-            //creates writer and reader
-            swriter = new StreamWriter(networkstream);
-            sreader = new StreamReader(networkstream);
+                        //gets stream between server and client
+                        NetworkStream networkstream = client.GetStream();
 
-            //starts thread to read messages being sent from other clients
-            //from the server
-            readthread = new Thread(new ThreadStart(Reader));
-            readthread.Start();
+                        //creates writer and reader
+                        swriter = new StreamWriter(networkstream);
+                        sreader = new StreamReader(networkstream);
+
+                        //starts thread to read messages being sent from other clients
+                        //from the server
+                        readthread = new Thread(new ThreadStart(Reader));
+                        readthread.Start();
+
+
+                        //sends the screen name to the server as the first message
+                        swriter.WriteLine(screenname_txtbx.Text);
+                        swriter.Flush();
+                    }
+                    catch (Exception s)
+                    {
+                        MessageBox.Show(s + " " + s.StackTrace);
+
+                    }
+                }
+            }
         }
 
         public void send_btn_Click(object sender, EventArgs e)
@@ -159,15 +170,22 @@ namespace GUI_Client
                     break;
                 default:
                     {
-                        //sends the exit message to the server
-                        String input = "exit";
-                        swriter.WriteLine(input);
-                        swriter.Flush();
-                        endthread = true;
+                        if (exitwithoutconnecting != true)
+                        {
+                            //sends the exit message to the server
+                            String input = "exit";
+                            swriter.WriteLine(input);
+                            swriter.Flush();
+                            endthread = true;
 
-                        //cleans up the threads
-                        readthread.Abort();
-                        //exits
+                            //cleans up the threads
+                            readthread.Abort();
+
+                            swriter.Close();
+                            sreader.Close();
+                            //exits
+                            break;
+                        }
                         break;
                     }
 

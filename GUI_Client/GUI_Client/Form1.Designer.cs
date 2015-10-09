@@ -33,12 +33,15 @@
             this.message_txtbx = new System.Windows.Forms.TextBox();
             this.connect_btn = new System.Windows.Forms.Button();
             this.send_btn = new System.Windows.Forms.Button();
+            this.screenname_txtbx = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // main_txtbx
             // 
             this.main_txtbx.BackColor = System.Drawing.Color.White;
-            this.main_txtbx.Location = new System.Drawing.Point(12, 38);
+            this.main_txtbx.Location = new System.Drawing.Point(12, 49);
             this.main_txtbx.Multiline = true;
             this.main_txtbx.Name = "main_txtbx";
             this.main_txtbx.ReadOnly = true;
@@ -47,7 +50,7 @@
             // 
             // server_address_txtbx
             // 
-            this.server_address_txtbx.Location = new System.Drawing.Point(12, 12);
+            this.server_address_txtbx.Location = new System.Drawing.Point(12, 23);
             this.server_address_txtbx.Name = "server_address_txtbx";
             this.server_address_txtbx.Size = new System.Drawing.Size(128, 20);
             this.server_address_txtbx.TabIndex = 1;
@@ -62,7 +65,7 @@
             // 
             // connect_btn
             // 
-            this.connect_btn.Location = new System.Drawing.Point(146, 12);
+            this.connect_btn.Location = new System.Drawing.Point(317, 23);
             this.connect_btn.Name = "connect_btn";
             this.connect_btn.Size = new System.Drawing.Size(75, 20);
             this.connect_btn.TabIndex = 3;
@@ -81,6 +84,33 @@
             this.send_btn.UseVisualStyleBackColor = false;
             this.send_btn.Click += new System.EventHandler(this.send_btn_Click);
             // 
+            // screenname_txtbx
+            // 
+            this.screenname_txtbx.Location = new System.Drawing.Point(146, 23);
+            this.screenname_txtbx.Name = "screenname_txtbx";
+            this.screenname_txtbx.Size = new System.Drawing.Size(165, 20);
+            this.screenname_txtbx.TabIndex = 5;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label1.Location = new System.Drawing.Point(12, 7);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(58, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "IP Address";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label2.Location = new System.Drawing.Point(143, 7);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(72, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Screen Name";
+            // 
             // Form1
             // 
             this.AcceptButton = this.send_btn;
@@ -88,6 +118,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Maroon;
             this.ClientSize = new System.Drawing.Size(718, 454);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.screenname_txtbx);
             this.Controls.Add(this.send_btn);
             this.Controls.Add(this.connect_btn);
             this.Controls.Add(this.message_txtbx);
@@ -106,6 +139,9 @@
         private System.Windows.Forms.Button connect_btn;
         public System.Windows.Forms.Button send_btn;
         public System.Windows.Forms.TextBox main_txtbx;
+        private System.Windows.Forms.TextBox screenname_txtbx;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }
 
