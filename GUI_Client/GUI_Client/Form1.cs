@@ -35,7 +35,7 @@ namespace GUI_Client
             send_btn.Enabled = false;
 
 
-            client = new TcpClient();
+            
             string text;
 
 
@@ -60,6 +60,7 @@ namespace GUI_Client
                 {
                     try
                     {
+                        client = new TcpClient();
                         //Host name comes from command line
                         //If no host specified, local machine is host
                         String host = server_address_txtbx.Text;
@@ -118,7 +119,7 @@ namespace GUI_Client
                 endthread = true;
 
                 //cleans up the threads
-                readthread.Abort();
+                //readthread.Abort();
                 this.Close();
             }
                  
@@ -131,11 +132,25 @@ namespace GUI_Client
             //if client has been closed, the reading will end
             while (endthread == false)
             {
-                String returndata = sreader.ReadLine();
-                returndata += "\n";
-                //using this method makes writing to the 
-                //message box thread safe
-                this.SetText(returndata);
+                try
+                {
+                    String returndata = sreader.ReadLine();
+                    returndata += "\n";
+                    //using this method makes writing to the 
+                    //message box thread safe
+                    this.SetText(returndata);
+                }
+                catch(Exception s)
+                {
+                    MessageBox.Show("Looks like the server died!\r\n" + s + " " + s.StackTrace);
+
+                    //cleans up the threads
+                    readthread.Abort();
+
+                    swriter.Close();
+                    sreader.Close();
+                    this.Close();
+                }
             }
 
         }
@@ -193,5 +208,47 @@ namespace GUI_Client
 
         }
 
+        private void restart_btn_Click(object sender, EventArgs e)
+        {
+            readthread.Abort();
+            exitwithoutconnecting = true;
+
+            swriter.Close();
+            sreader.Close();
+            client.Close();
+
+            //lets you use the send button now that the connect has been made
+            send_btn.Enabled = false;
+            server_address_txtbx.Enabled = true;
+            send_btn.ForeColor = Color.Black;
+            connect_btn.Enabled = true;
+            connect_btn.ForeColor = Color.Black;
+            screenname_txtbx.Enabled = true;
+
+        }
+
+        private void disconnect_btn_Click(object sender, EventArgs e)
+        {
+            exitwithoutconnecting = true;
+
+            message_txtbx.Text = "exit";
+            //gets the message to be sent from the user
+            String input = message_txtbx.Text;
+            //clears the message box
+            message_txtbx.Clear();
+
+            //sends the message to the sever to be sent to 
+            //other clients
+            swriter.WriteLine(input);
+            swriter.Flush();
+
+            if (input == "exit")
+            {
+                endthread = true;
+
+                this.Close();
+            }
+
+        }
     }
 }

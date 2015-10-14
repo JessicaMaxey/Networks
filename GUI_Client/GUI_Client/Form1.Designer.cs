@@ -36,6 +36,8 @@
             this.screenname_txtbx = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.restart_btn = new System.Windows.Forms.Button();
+            this.disconnect_btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // main_txtbx
@@ -111,6 +113,26 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Screen Name";
             // 
+            // restart_btn
+            // 
+            this.restart_btn.Location = new System.Drawing.Point(399, 23);
+            this.restart_btn.Name = "restart_btn";
+            this.restart_btn.Size = new System.Drawing.Size(75, 20);
+            this.restart_btn.TabIndex = 8;
+            this.restart_btn.Text = "restart";
+            this.restart_btn.UseVisualStyleBackColor = true;
+            this.restart_btn.Click += new System.EventHandler(this.restart_btn_Click);
+            // 
+            // disconnect_btn
+            // 
+            this.disconnect_btn.Location = new System.Drawing.Point(481, 23);
+            this.disconnect_btn.Name = "disconnect_btn";
+            this.disconnect_btn.Size = new System.Drawing.Size(75, 19);
+            this.disconnect_btn.TabIndex = 9;
+            this.disconnect_btn.Text = "disconnect";
+            this.disconnect_btn.UseVisualStyleBackColor = true;
+            this.disconnect_btn.Click += new System.EventHandler(this.disconnect_btn_Click);
+            // 
             // Form1
             // 
             this.AcceptButton = this.send_btn;
@@ -118,6 +140,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Maroon;
             this.ClientSize = new System.Drawing.Size(718, 454);
+            this.Controls.Add(this.disconnect_btn);
+            this.Controls.Add(this.restart_btn);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.screenname_txtbx);
@@ -142,6 +166,8 @@
         private System.Windows.Forms.TextBox screenname_txtbx;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button restart_btn;
+        private System.Windows.Forms.Button disconnect_btn;
     }
 }
 
