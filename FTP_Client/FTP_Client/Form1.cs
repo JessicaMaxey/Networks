@@ -32,7 +32,6 @@ namespace FTP_Client
 
         private void ListDirectory(TreeView treeView, string path)
         {
-            treeView = local_tv;
             treeView.Nodes.Clear();
 
             var stack = new Stack<TreeNode>();
@@ -57,6 +56,19 @@ namespace FTP_Client
             treeView.Nodes.Add(node);
         }
 
+        private void connect_btn_Click(object sender, EventArgs e)
+        { 
+        }
+
+        private FtpWebRequest Connect (string URI)
+        {
+            FtpWebRequest result = (FtpWebRequest)FtpWebRequest.Create(URI);
+
+            result.Credentials = new NetworkCredential(username_txtbx.Text, password_txtbx.Text, host_txtbx.Text);
+
+            result.KeepAlive = false;
+            return result;
+        }
         //LoginToServer
         //CreateFileOnServer
         //ReadFileFromServer "display"

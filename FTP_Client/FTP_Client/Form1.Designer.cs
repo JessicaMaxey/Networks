@@ -36,7 +36,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.port_txtbx = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.message_txtbx = new System.Windows.Forms.TextBox();
             this.connect_btn = new System.Windows.Forms.Button();
             this.local_tv = new System.Windows.Forms.TreeView();
             this.remote_tv = new System.Windows.Forms.TreeView();
@@ -44,6 +43,9 @@
             this.local_site_txtbx = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.remote_site_txtbx = new System.Windows.Forms.TextBox();
+            this.upload_btn = new System.Windows.Forms.Button();
+            this.delete_btn = new System.Windows.Forms.Button();
+            this.rename_btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -110,14 +112,6 @@
             this.label4.TabIndex = 7;
             this.label4.Text = "Port";
             // 
-            // message_txtbx
-            // 
-            this.message_txtbx.Location = new System.Drawing.Point(15, 43);
-            this.message_txtbx.Multiline = true;
-            this.message_txtbx.Name = "message_txtbx";
-            this.message_txtbx.Size = new System.Drawing.Size(772, 159);
-            this.message_txtbx.TabIndex = 8;
-            // 
             // connect_btn
             // 
             this.connect_btn.Location = new System.Drawing.Point(626, 6);
@@ -126,17 +120,18 @@
             this.connect_btn.TabIndex = 9;
             this.connect_btn.Text = "Connect";
             this.connect_btn.UseVisualStyleBackColor = true;
+            this.connect_btn.Click += new System.EventHandler(this.connect_btn_Click);
             // 
             // local_tv
             // 
-            this.local_tv.Location = new System.Drawing.Point(15, 246);
+            this.local_tv.Location = new System.Drawing.Point(15, 71);
             this.local_tv.Name = "local_tv";
             this.local_tv.Size = new System.Drawing.Size(377, 216);
             this.local_tv.TabIndex = 10;
             // 
             // remote_tv
             // 
-            this.remote_tv.Location = new System.Drawing.Point(398, 246);
+            this.remote_tv.Location = new System.Drawing.Point(398, 71);
             this.remote_tv.Name = "remote_tv";
             this.remote_tv.Size = new System.Drawing.Size(389, 216);
             this.remote_tv.TabIndex = 11;
@@ -144,7 +139,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(12, 223);
+            this.label5.Location = new System.Drawing.Point(12, 48);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(55, 13);
             this.label5.TabIndex = 12;
@@ -152,7 +147,7 @@
             // 
             // local_site_txtbx
             // 
-            this.local_site_txtbx.Location = new System.Drawing.Point(73, 220);
+            this.local_site_txtbx.Location = new System.Drawing.Point(73, 45);
             this.local_site_txtbx.Name = "local_site_txtbx";
             this.local_site_txtbx.Size = new System.Drawing.Size(319, 20);
             this.local_site_txtbx.TabIndex = 13;
@@ -160,7 +155,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(399, 227);
+            this.label6.Location = new System.Drawing.Point(399, 52);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(66, 13);
             this.label6.TabIndex = 14;
@@ -168,16 +163,46 @@
             // 
             // remote_site_txtbx
             // 
-            this.remote_site_txtbx.Location = new System.Drawing.Point(471, 220);
+            this.remote_site_txtbx.Location = new System.Drawing.Point(471, 45);
             this.remote_site_txtbx.Name = "remote_site_txtbx";
             this.remote_site_txtbx.Size = new System.Drawing.Size(316, 20);
             this.remote_site_txtbx.TabIndex = 15;
+            // 
+            // upload_btn
+            // 
+            this.upload_btn.Location = new System.Drawing.Point(15, 302);
+            this.upload_btn.Name = "upload_btn";
+            this.upload_btn.Size = new System.Drawing.Size(75, 36);
+            this.upload_btn.TabIndex = 16;
+            this.upload_btn.Text = "Upload";
+            this.upload_btn.UseVisualStyleBackColor = true;
+            // 
+            // delete_btn
+            // 
+            this.delete_btn.Location = new System.Drawing.Point(96, 302);
+            this.delete_btn.Name = "delete_btn";
+            this.delete_btn.Size = new System.Drawing.Size(75, 36);
+            this.delete_btn.TabIndex = 17;
+            this.delete_btn.Text = "Delete";
+            this.delete_btn.UseVisualStyleBackColor = true;
+            // 
+            // rename_btn
+            // 
+            this.rename_btn.Location = new System.Drawing.Point(177, 302);
+            this.rename_btn.Name = "rename_btn";
+            this.rename_btn.Size = new System.Drawing.Size(75, 36);
+            this.rename_btn.TabIndex = 18;
+            this.rename_btn.Text = "Rename";
+            this.rename_btn.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(799, 490);
+            this.ClientSize = new System.Drawing.Size(799, 355);
+            this.Controls.Add(this.rename_btn);
+            this.Controls.Add(this.delete_btn);
+            this.Controls.Add(this.upload_btn);
             this.Controls.Add(this.remote_site_txtbx);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.local_site_txtbx);
@@ -185,7 +210,6 @@
             this.Controls.Add(this.remote_tv);
             this.Controls.Add(this.local_tv);
             this.Controls.Add(this.connect_btn);
-            this.Controls.Add(this.message_txtbx);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.port_txtbx);
             this.Controls.Add(this.label3);
@@ -212,7 +236,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox port_txtbx;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox message_txtbx;
         private System.Windows.Forms.Button connect_btn;
         private System.Windows.Forms.TreeView local_tv;
         private System.Windows.Forms.TreeView remote_tv;
@@ -220,6 +243,9 @@
         private System.Windows.Forms.TextBox local_site_txtbx;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox remote_site_txtbx;
+        private System.Windows.Forms.Button upload_btn;
+        private System.Windows.Forms.Button delete_btn;
+        private System.Windows.Forms.Button rename_btn;
     }
 }
 
