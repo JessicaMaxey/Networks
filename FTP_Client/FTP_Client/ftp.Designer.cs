@@ -1,6 +1,6 @@
 ﻿namespace FTP_Client
 {
-    partial class Form1
+    partial class ftp
     {
         /// <summary>
         /// Required designer variable.
