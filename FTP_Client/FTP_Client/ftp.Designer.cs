@@ -176,6 +176,7 @@
             this.upload_btn.TabIndex = 16;
             this.upload_btn.Text = "Upload";
             this.upload_btn.UseVisualStyleBackColor = true;
+            this.upload_btn.Click += new System.EventHandler(this.upload_btn_Click);
             // 
             // delete_btn
             // 
@@ -195,7 +196,7 @@
             this.rename_btn.Text = "Rename";
             this.rename_btn.UseVisualStyleBackColor = true;
             // 
-            // Form1
+            // ftp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -218,7 +219,7 @@
             this.Controls.Add(this.username_txtbx);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
-            this.Name = "Form1";
+            this.Name = "ftp";
             this.Text = "FTP Client";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
