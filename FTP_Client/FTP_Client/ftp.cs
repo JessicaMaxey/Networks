@@ -16,8 +16,6 @@ namespace FTP_Client
 {
     public partial class ftp : Form
     {
-        private FtpWebRequest ftprequest;
-        private FtpWebResponse ftpresponse;
         private string host = null;
         private string user = null;
         private string password = null;
