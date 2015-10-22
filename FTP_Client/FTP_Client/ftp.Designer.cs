@@ -85,7 +85,7 @@
             this.host_txtbx.Location = new System.Drawing.Point(47, 6);
             this.host_txtbx.Name = "host_txtbx";
             this.host_txtbx.Size = new System.Drawing.Size(100, 20);
-            this.host_txtbx.TabIndex = 4;
+            this.host_txtbx.TabIndex = 1;
             // 
             // label3
             // 
@@ -101,7 +101,7 @@
             this.port_txtbx.Location = new System.Drawing.Point(547, 6);
             this.port_txtbx.Name = "port_txtbx";
             this.port_txtbx.Size = new System.Drawing.Size(59, 20);
-            this.port_txtbx.TabIndex = 6;
+            this.port_txtbx.TabIndex = 4;
             // 
             // label4
             // 
@@ -117,7 +117,7 @@
             this.connect_btn.Location = new System.Drawing.Point(626, 6);
             this.connect_btn.Name = "connect_btn";
             this.connect_btn.Size = new System.Drawing.Size(95, 20);
-            this.connect_btn.TabIndex = 9;
+            this.connect_btn.TabIndex = 5;
             this.connect_btn.Text = "Connect";
             this.connect_btn.UseVisualStyleBackColor = true;
             this.connect_btn.Click += new System.EventHandler(this.connect_btn_Click);
@@ -128,6 +128,7 @@
             this.local_tv.Name = "local_tv";
             this.local_tv.Size = new System.Drawing.Size(377, 216);
             this.local_tv.TabIndex = 10;
+            this.local_tv.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.local_tv_NodeMouseDoubleClick);
             // 
             // remote_tv
             // 
@@ -135,6 +136,7 @@
             this.remote_tv.Name = "remote_tv";
             this.remote_tv.Size = new System.Drawing.Size(389, 216);
             this.remote_tv.TabIndex = 11;
+            this.remote_tv.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.remote_tv_NodeMouseDoubleClick);
             // 
             // label5
             // 
@@ -173,7 +175,7 @@
             this.upload_btn.Location = new System.Drawing.Point(15, 302);
             this.upload_btn.Name = "upload_btn";
             this.upload_btn.Size = new System.Drawing.Size(75, 36);
-            this.upload_btn.TabIndex = 16;
+            this.upload_btn.TabIndex = 6;
             this.upload_btn.Text = "Upload";
             this.upload_btn.UseVisualStyleBackColor = true;
             this.upload_btn.Click += new System.EventHandler(this.upload_btn_Click);
@@ -183,18 +185,20 @@
             this.delete_btn.Location = new System.Drawing.Point(96, 302);
             this.delete_btn.Name = "delete_btn";
             this.delete_btn.Size = new System.Drawing.Size(75, 36);
-            this.delete_btn.TabIndex = 17;
+            this.delete_btn.TabIndex = 7;
             this.delete_btn.Text = "Delete";
             this.delete_btn.UseVisualStyleBackColor = true;
+            this.delete_btn.Click += new System.EventHandler(this.delete_btn_Click);
             // 
             // rename_btn
             // 
             this.rename_btn.Location = new System.Drawing.Point(177, 302);
             this.rename_btn.Name = "rename_btn";
             this.rename_btn.Size = new System.Drawing.Size(75, 36);
-            this.rename_btn.TabIndex = 18;
+            this.rename_btn.TabIndex = 8;
             this.rename_btn.Text = "Rename";
             this.rename_btn.UseVisualStyleBackColor = true;
+            this.rename_btn.Click += new System.EventHandler(this.rename_btn_Click);
             // 
             // ftp
             // 
