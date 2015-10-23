@@ -178,11 +178,9 @@ namespace FTP_Client
         {
             try
             {
-                // Get the object used to communicate with the server.
                 FtpWebRequest ftp_request = (FtpWebRequest)WebRequest.Create(host + "/" + remote_file);
                 ftp_request.Method = WebRequestMethods.Ftp.UploadFile;
 
-                // This example assumes the FTP site uses anonymous logon.
                 ftp_request.Credentials = new NetworkCredential(user, password);
 
                 ftp_request.UseBinary = true;
@@ -273,7 +271,7 @@ namespace FTP_Client
             }
         }
 
-        private void upload_btn_Click(object sender, EventArgs e)
+        private void upload_server_btn_Click(object sender, EventArgs e)
         {
             local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
             remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
@@ -287,7 +285,7 @@ namespace FTP_Client
             RemoteListDirectory(remote_tv);
         }
 
-        private void delete_btn_Click(object sender, EventArgs e)
+        private void delete_server_btn_Click(object sender, EventArgs e)
         {
             remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
 
@@ -297,7 +295,7 @@ namespace FTP_Client
 
         }
 
-        private void rename_btn_Click(object sender, EventArgs e)
+        private void rename_server_btn_Click(object sender, EventArgs e)
         {
             remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
 
@@ -310,6 +308,86 @@ namespace FTP_Client
             RemoteListDirectory(remote_tv);
 
         }
+
+        private void Download (string remote_file, string local_file)
+        {
+            try
+            {
+                int bytes_read = 0;
+                byte[] buffer = new byte[2048];
+
+                FtpWebRequest ftp_request = (FtpWebRequest)WebRequest.Create(host + "/" + remote_file);
+                ftp_request.Method = WebRequestMethods.Ftp.DownloadFile;
+
+                ftp_request.Credentials = new NetworkCredential(user, password);
+
+                ftp_request.UseBinary = true;
+
+                Stream reader = ftp_request.GetResponse().GetResponseStream();
+
+
+                FileStream file_stream = new FileStream(local_file, FileMode.Create);
+
+                while (true)
+                {
+                    bytes_read = reader.Read(buffer, 0, buffer.Length);
+
+                    if (bytes_read == 0)
+                        break;
+
+                    file_stream.Write(buffer, 0, bytes_read);
+                }
+
+                file_stream.Close();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.ToString());
+
+            }
+        }
+
+
+
+
+        private void upload_client_btn_Click(object sender, EventArgs e)
+        {
+            local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
+            remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+
+            string new_file_name = GetFileName(remote_site_txtbx.Text);
+            string remote_file = remote_site_txtbx.Text; 
+            string local_file = local_site_txtbx.Text + "\\" + new_file_name;
+
+            Download(remote_file, local_file);
+
+            LocalListDirectory(local_tv, start_dir);
+
+        }
+
+        //private void delete_client_btn_Click(object sender, EventArgs e)
+        //{
+        //    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
+
+
+        //    Delete(local_site_txtbx.Text);
+
+        //    LocalListDirectory(local_tv, start_dir);
+
+        //}
+
+        //private void rename_client_btn_Click(object sender, EventArgs e)
+        //{
+        //    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
+
+        //    string new_file_name = Microsoft.VisualBasic.Interaction.InputBox("Enter new file/directory name", "Rename", "", -1, -1);
+
+
+        //    Rename(local_site_txtbx.Text, new_file_name);
+
+        //    LocalListDirectory(local_tv, start_dir);
+
+        //}
 
         private void remote_tv_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -331,5 +409,6 @@ namespace FTP_Client
             { }
         }
 
-      }
+
+    }
 }

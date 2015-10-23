@@ -43,9 +43,10 @@
             this.local_site_txtbx = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.remote_site_txtbx = new System.Windows.Forms.TextBox();
-            this.upload_btn = new System.Windows.Forms.Button();
-            this.delete_btn = new System.Windows.Forms.Button();
-            this.rename_btn = new System.Windows.Forms.Button();
+            this.upload_server_btn = new System.Windows.Forms.Button();
+            this.delete_server_btn = new System.Windows.Forms.Button();
+            this.rename_server_btn = new System.Windows.Forms.Button();
+            this.upload_client_btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -170,44 +171,55 @@
             this.remote_site_txtbx.Size = new System.Drawing.Size(316, 20);
             this.remote_site_txtbx.TabIndex = 15;
             // 
-            // upload_btn
+            // upload_server_btn
             // 
-            this.upload_btn.Location = new System.Drawing.Point(15, 302);
-            this.upload_btn.Name = "upload_btn";
-            this.upload_btn.Size = new System.Drawing.Size(75, 36);
-            this.upload_btn.TabIndex = 6;
-            this.upload_btn.Text = "Upload";
-            this.upload_btn.UseVisualStyleBackColor = true;
-            this.upload_btn.Click += new System.EventHandler(this.upload_btn_Click);
+            this.upload_server_btn.Location = new System.Drawing.Point(15, 293);
+            this.upload_server_btn.Name = "upload_server_btn";
+            this.upload_server_btn.Size = new System.Drawing.Size(75, 36);
+            this.upload_server_btn.TabIndex = 6;
+            this.upload_server_btn.Text = "Upload To Server";
+            this.upload_server_btn.UseVisualStyleBackColor = true;
+            this.upload_server_btn.Click += new System.EventHandler(this.upload_server_btn_Click);
             // 
-            // delete_btn
+            // delete_server_btn
             // 
-            this.delete_btn.Location = new System.Drawing.Point(96, 302);
-            this.delete_btn.Name = "delete_btn";
-            this.delete_btn.Size = new System.Drawing.Size(75, 36);
-            this.delete_btn.TabIndex = 7;
-            this.delete_btn.Text = "Delete";
-            this.delete_btn.UseVisualStyleBackColor = true;
-            this.delete_btn.Click += new System.EventHandler(this.delete_btn_Click);
+            this.delete_server_btn.Location = new System.Drawing.Point(96, 293);
+            this.delete_server_btn.Name = "delete_server_btn";
+            this.delete_server_btn.Size = new System.Drawing.Size(75, 36);
+            this.delete_server_btn.TabIndex = 7;
+            this.delete_server_btn.Text = "Delete From Server";
+            this.delete_server_btn.UseVisualStyleBackColor = true;
+            this.delete_server_btn.Click += new System.EventHandler(this.delete_server_btn_Click);
             // 
-            // rename_btn
+            // rename_server_btn
             // 
-            this.rename_btn.Location = new System.Drawing.Point(177, 302);
-            this.rename_btn.Name = "rename_btn";
-            this.rename_btn.Size = new System.Drawing.Size(75, 36);
-            this.rename_btn.TabIndex = 8;
-            this.rename_btn.Text = "Rename";
-            this.rename_btn.UseVisualStyleBackColor = true;
-            this.rename_btn.Click += new System.EventHandler(this.rename_btn_Click);
+            this.rename_server_btn.Location = new System.Drawing.Point(177, 293);
+            this.rename_server_btn.Name = "rename_server_btn";
+            this.rename_server_btn.Size = new System.Drawing.Size(75, 36);
+            this.rename_server_btn.TabIndex = 8;
+            this.rename_server_btn.Text = "Rename File On Server";
+            this.rename_server_btn.UseVisualStyleBackColor = true;
+            this.rename_server_btn.Click += new System.EventHandler(this.rename_server_btn_Click);
+            // 
+            // upload_client_btn
+            // 
+            this.upload_client_btn.Location = new System.Drawing.Point(398, 296);
+            this.upload_client_btn.Name = "upload_client_btn";
+            this.upload_client_btn.Size = new System.Drawing.Size(75, 36);
+            this.upload_client_btn.TabIndex = 16;
+            this.upload_client_btn.Text = "Download To Client";
+            this.upload_client_btn.UseVisualStyleBackColor = true;
+            this.upload_client_btn.Click += new System.EventHandler(this.upload_client_btn_Click);
             // 
             // ftp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(799, 355);
-            this.Controls.Add(this.rename_btn);
-            this.Controls.Add(this.delete_btn);
-            this.Controls.Add(this.upload_btn);
+            this.ClientSize = new System.Drawing.Size(799, 346);
+            this.Controls.Add(this.upload_client_btn);
+            this.Controls.Add(this.rename_server_btn);
+            this.Controls.Add(this.delete_server_btn);
+            this.Controls.Add(this.upload_server_btn);
             this.Controls.Add(this.remote_site_txtbx);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.local_site_txtbx);
@@ -248,9 +260,10 @@
         private System.Windows.Forms.TextBox local_site_txtbx;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox remote_site_txtbx;
-        private System.Windows.Forms.Button upload_btn;
-        private System.Windows.Forms.Button delete_btn;
-        private System.Windows.Forms.Button rename_btn;
+        private System.Windows.Forms.Button upload_server_btn;
+        private System.Windows.Forms.Button delete_server_btn;
+        private System.Windows.Forms.Button rename_server_btn;
+        private System.Windows.Forms.Button upload_client_btn;
     }
 }
 
