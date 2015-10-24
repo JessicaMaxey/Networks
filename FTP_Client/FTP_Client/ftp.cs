@@ -20,6 +20,9 @@ namespace FTP_Client
         private string host = null;
         private string user = null;
         private string password = null;
+        private FtpWebResponse ftp_response = null;
+        private Stream ftp_stream = null;
+        private int buffer_size = 2048;
 
         public ftp (string host_IP, string user_name, string pass_word) { host = host_IP; user = user_name; password = pass_word; }
 
@@ -173,11 +176,34 @@ namespace FTP_Client
             return directory_node;
         }
 
+        
+        private void RecursiveServerDirectory(string dir_path, string upload_path)
+        {
+            string[] files = Directory.GetFiles(dir_path, "*.*");
+            string[] subDirs = Directory.GetDirectories(dir_path);
 
-        private void Upload (string remote_file, string local_file)
+
+            foreach (string subDir in subDirs)
+            {
+                CreateDirectory(upload_path + "/" + Path.GetFileName(subDir));
+                RecursiveServerDirectory(subDir, upload_path + "/" + Path.GetFileName(subDir));
+            }
+
+            foreach (string file in files)
+            {
+                Upload(upload_path + "/" + Path.GetFileName(file), file);
+            }
+
+
+        }
+
+
+        /* Upload File */
+        public void Upload(string remote_file, string local_file)
         {
             try
             {
+
                 FtpWebRequest ftp_request = (FtpWebRequest)WebRequest.Create(host + "/" + remote_file);
                 ftp_request.Method = WebRequestMethods.Ftp.UploadFile;
 
@@ -204,6 +230,31 @@ namespace FTP_Client
             }
         }
 
+        /* Create a New Directory on the FTP Server */
+        public void CreateDirectory(string new_directory)
+        {
+            try
+            {
+                FtpWebRequest ftp_request = (FtpWebRequest)WebRequest.Create(host + "/" + new_directory);
+                ftp_request.Credentials = new NetworkCredential(user, password);
+
+                ftp_request.UseBinary = true;
+                ftp_request.UsePassive = true;
+                ftp_request.KeepAlive = true;
+
+                ftp_request.Method = WebRequestMethods.Ftp.MakeDirectory;
+
+                ftp_response = (FtpWebResponse)ftp_request.GetResponse();
+
+                ftp_response.Close();
+                ftp_request = null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return;
+        }
 
 
 
@@ -275,20 +326,16 @@ namespace FTP_Client
         {
             try
             {
-                if (local_site_txtbx.Text == null)
-                {
-                    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
-                }
-                if (remote_site_txtbx.Text == null)
-                {
-                    remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
-                }
+                local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
+
+                remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
 
                 string new_file_name = GetFileName(local_site_txtbx.Text);
                 string remote_file = remote_site_txtbx.Text + "\\" + new_file_name;
                 string local_file = local_site_txtbx.Text;
 
-                Upload(remote_file, local_file);
+
+                RecursiveServerDirectory(local_file, remote_file);
 
                 RemoteListDirectory(remote_tv);
             }
