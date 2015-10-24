@@ -273,39 +273,68 @@ namespace FTP_Client
 
         private void upload_server_btn_Click(object sender, EventArgs e)
         {
-            local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
-            remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+            try
+            {
+                if (local_site_txtbx.Text == null)
+                {
+                    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
+                }
+                if (remote_site_txtbx.Text == null)
+                {
+                    remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+                }
 
-            string new_file_name = GetFileName(local_site_txtbx.Text);
-            string remote_file = remote_site_txtbx.Text + "\\" + new_file_name;
-            string local_file = local_site_txtbx.Text;
+                string new_file_name = GetFileName(local_site_txtbx.Text);
+                string remote_file = remote_site_txtbx.Text + "\\" + new_file_name;
+                string local_file = local_site_txtbx.Text;
 
-            Upload(remote_file, local_file);
+                Upload(remote_file, local_file);
 
-            RemoteListDirectory(remote_tv);
+                RemoteListDirectory(remote_tv);
+            }
+            catch (Exception p)
+            {
+                MessageBox.Show(p.ToString());
+            }
         }
-
+        
         private void delete_server_btn_Click(object sender, EventArgs e)
         {
-            remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+            try
+            {
 
-            Delete(remote_site_txtbx.Text);
+                remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
 
-            RemoteListDirectory(remote_tv);
+                Delete(remote_site_txtbx.Text);
+
+                RemoteListDirectory(remote_tv);
+            }
+            catch (Exception p)
+            {
+                MessageBox.Show(p.ToString());
+            }
 
         }
 
         private void rename_server_btn_Click(object sender, EventArgs e)
         {
-            remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+            try
+            {
+
+                remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
 
 
-            string new_file_name = Microsoft.VisualBasic.Interaction.InputBox("Enter new file/directory name", "Rename", "", -1, -1);
+                string new_file_name = Microsoft.VisualBasic.Interaction.InputBox("Enter new file/directory name", "Rename", "", -1, -1);
 
 
-            Rename(remote_site_txtbx.Text, new_file_name);
+                Rename(remote_site_txtbx.Text, new_file_name);
 
-            RemoteListDirectory(remote_tv);
+                RemoteListDirectory(remote_tv);
+            }
+            catch (Exception p)
+            {
+                MessageBox.Show(p.ToString());
+            }
 
         }
 
@@ -352,42 +381,31 @@ namespace FTP_Client
 
         private void upload_client_btn_Click(object sender, EventArgs e)
         {
-            local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
-            remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+            try
+            {
+                if (local_site_txtbx.Text == null)
+                {
+                    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
+                }
+                if(remote_site_txtbx.Text == null)
+                {
+                    remote_site_txtbx.Text = remote_tv.SelectedNode.FullPath.ToString();
+                }
 
-            string new_file_name = GetFileName(remote_site_txtbx.Text);
-            string remote_file = remote_site_txtbx.Text; 
-            string local_file = local_site_txtbx.Text + "\\" + new_file_name;
+                string new_file_name = GetFileName(remote_site_txtbx.Text);
+                string remote_file = remote_site_txtbx.Text;
+                string local_file = local_site_txtbx.Text + "\\" + new_file_name;
 
-            Download(remote_file, local_file);
+                Download(remote_file, local_file);
 
-            LocalListDirectory(local_tv, start_dir);
+                LocalListDirectory(local_tv, start_dir);
+            }
+            catch (Exception p)
+            {
+                MessageBox.Show(p.ToString());
+            }
 
         }
-
-        //private void delete_client_btn_Click(object sender, EventArgs e)
-        //{
-        //    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
-
-
-        //    Delete(local_site_txtbx.Text);
-
-        //    LocalListDirectory(local_tv, start_dir);
-
-        //}
-
-        //private void rename_client_btn_Click(object sender, EventArgs e)
-        //{
-        //    local_site_txtbx.Text = (local_tv.SelectedNode.FullPath.ToString());
-
-        //    string new_file_name = Microsoft.VisualBasic.Interaction.InputBox("Enter new file/directory name", "Rename", "", -1, -1);
-
-
-        //    Rename(local_site_txtbx.Text, new_file_name);
-
-        //    LocalListDirectory(local_tv, start_dir);
-
-        //}
 
         private void remote_tv_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
