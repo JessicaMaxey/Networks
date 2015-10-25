@@ -17,6 +17,7 @@ namespace FTP_Client
     public partial class ftp : Form
     {
         //The starting directory for the local side
+        private string true_start_dir = @"C:\";
         private string start_dir = @"C:\";
 
         //various data members
@@ -40,15 +41,15 @@ namespace FTP_Client
         {
             try
             {
-                start_dir = Microsoft.VisualBasic.Interaction.InputBox("Enter new file/directory name\n Start directory is C: by default.", "Rename", "", -1, -1);
+                true_start_dir = Microsoft.VisualBasic.Interaction.InputBox("Enter new file/directory name\n Start directory is C: by default.", "Rename", "", -1, -1);
 
-                if (start_dir == null || start_dir == "" || start_dir == "C:")
+                if (true_start_dir == null || true_start_dir == "" || true_start_dir == "C:")
                 {
-                    start_dir = "C:\\";
+                    true_start_dir = "C:\\";
                     MessageBox.Show("Program is gathering directories and files, please wait. (press ok to continue)");
 
                     //gathers the starting directory location and fills in the treeview with data
-                    LocalListDirectory(local_tv, start_dir);
+                    LocalListDirectory(local_tv, true_start_dir);
 
                     MessageBox.Show("Double click the file or directory you would like to use before clicking on a operation.");
                 }
@@ -58,9 +59,9 @@ namespace FTP_Client
                     MessageBox.Show("Program is gathering directories and files, please wait. (press ok to continue)");
 
                     //gathers the starting directory location and fills in the treeview with data
-                    LocalListDirectory(local_tv, start_dir);
+                    LocalListDirectory(local_tv, true_start_dir);
 
-                    start_dir = FixStartingDirectory(start_dir);
+                    start_dir = FixStartingDirectory(true_start_dir);
 
 
                     MessageBox.Show("Double click the file or directory you would like to use before clicking on a operation.");
@@ -458,6 +459,8 @@ namespace FTP_Client
 
         }
 
+
+
         //for renaming a file that is on the server
         private void Rename(string remote_file, string new_file_name)
         {
@@ -703,8 +706,10 @@ namespace FTP_Client
                 Download(remote_file, local_file);
 
                 MessageBox.Show("Refreshing local treeview, may take a moment (press ok to continue.)");
+
                 //refreshs the treeview to reflect the new files/dir on client
-                LocalListDirectory(local_tv, start_dir);
+                LocalListDirectory(local_tv, true_start_dir);
+
                 MessageBox.Show("Complete. Thank you for waiting.");
             }
             catch (Exception)
@@ -731,8 +736,10 @@ namespace FTP_Client
                     Download(remote_file, local_file);
 
                     MessageBox.Show("Refreshing local treeview, may take a moment (press ok to continue.)");
+
                     //refreshs the treeview to reflect the new files/dir on client
-                    LocalListDirectory(local_tv, start_dir);
+                    LocalListDirectory(local_tv, true_start_dir);
+
                     MessageBox.Show("Complete. Thank you for waiting.");
                 }
                 catch (Exception p)
