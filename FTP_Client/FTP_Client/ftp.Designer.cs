@@ -73,6 +73,7 @@
             this.username_txtbx.Name = "username_txtbx";
             this.username_txtbx.Size = new System.Drawing.Size(100, 20);
             this.username_txtbx.TabIndex = 2;
+            this.username_txtbx.Text = "user";
             // 
             // password_txtbx
             // 
@@ -80,6 +81,7 @@
             this.password_txtbx.Name = "password_txtbx";
             this.password_txtbx.Size = new System.Drawing.Size(100, 20);
             this.password_txtbx.TabIndex = 3;
+            this.password_txtbx.Text = "password";
             // 
             // host_txtbx
             // 
@@ -87,6 +89,7 @@
             this.host_txtbx.Name = "host_txtbx";
             this.host_txtbx.Size = new System.Drawing.Size(100, 20);
             this.host_txtbx.TabIndex = 1;
+            this.host_txtbx.Text = "127.0.0.1";
             // 
             // label3
             // 
