@@ -34,6 +34,7 @@ namespace FTP_Client
         public ftp()
         {
             InitializeComponent();
+
         }
 
 
@@ -51,7 +52,6 @@ namespace FTP_Client
                     //gathers the starting directory location and fills in the treeview with data
                     LocalListDirectory(local_tv, true_start_dir);
 
-                    MessageBox.Show("Double click the file or directory you would like to use before clicking on a operation.");
                 }
                 else
                 {
@@ -64,9 +64,9 @@ namespace FTP_Client
                     start_dir = FixStartingDirectory(true_start_dir);
 
 
-                    MessageBox.Show("Double click the file or directory you would like to use before clicking on a operation.");
                 }
 
+                MessageBox.Show("Instructions: Double click the file or directory you would like to use before clicking on an operation(upload, download, etc.)\nUpload – This will up load a directory / subdirectories / files to the server. \nDelete – This will delete a single item on the server, you must have no files under the directory for you to be able to delete the directory. \nRename – This will rename an item on the server. \nDownload – This will download a single file from the server to the specified directory on the client.It will not download directories.");
 
 
 
