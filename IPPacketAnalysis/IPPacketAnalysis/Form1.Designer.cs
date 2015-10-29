@@ -29,14 +29,14 @@
         private void InitializeComponent()
         {
             this.start_btn = new System.Windows.Forms.Button();
-            this.ip_txtbx = new System.Windows.Forms.TextBox();
-            this.transport_txtbx = new System.Windows.Forms.TextBox();
-            this.app_layer_txtbx = new System.Windows.Forms.TextBox();
+            this.ip_lb = new System.Windows.Forms.ListBox();
+            this.trans_lb = new System.Windows.Forms.ListBox();
+            this.app_lb = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // start_btn
             // 
-            this.start_btn.Location = new System.Drawing.Point(12, 546);
+            this.start_btn.Location = new System.Drawing.Point(12, 549);
             this.start_btn.Name = "start_btn";
             this.start_btn.Size = new System.Drawing.Size(75, 23);
             this.start_btn.TabIndex = 0;
@@ -44,52 +44,51 @@
             this.start_btn.UseVisualStyleBackColor = true;
             this.start_btn.Click += new System.EventHandler(this.start_btn_Click);
             // 
-            // ip_txtbx
+            // ip_lb
             // 
-            this.ip_txtbx.Location = new System.Drawing.Point(12, 12);
-            this.ip_txtbx.Multiline = true;
-            this.ip_txtbx.Name = "ip_txtbx";
-            this.ip_txtbx.Size = new System.Drawing.Size(570, 172);
-            this.ip_txtbx.TabIndex = 1;
+            this.ip_lb.FormattingEnabled = true;
+            this.ip_lb.Location = new System.Drawing.Point(12, 12);
+            this.ip_lb.Name = "ip_lb";
+            this.ip_lb.Size = new System.Drawing.Size(822, 173);
+            this.ip_lb.TabIndex = 1;
             // 
-            // transport_txtbx
+            // trans_lb
             // 
-            this.transport_txtbx.Location = new System.Drawing.Point(12, 190);
-            this.transport_txtbx.Multiline = true;
-            this.transport_txtbx.Name = "transport_txtbx";
-            this.transport_txtbx.Size = new System.Drawing.Size(570, 172);
-            this.transport_txtbx.TabIndex = 2;
+            this.trans_lb.FormattingEnabled = true;
+            this.trans_lb.Location = new System.Drawing.Point(12, 191);
+            this.trans_lb.Name = "trans_lb";
+            this.trans_lb.Size = new System.Drawing.Size(822, 173);
+            this.trans_lb.TabIndex = 2;
             // 
-            // app_layer_txtbx
+            // app_lb
             // 
-            this.app_layer_txtbx.Location = new System.Drawing.Point(12, 368);
-            this.app_layer_txtbx.Multiline = true;
-            this.app_layer_txtbx.Name = "app_layer_txtbx";
-            this.app_layer_txtbx.Size = new System.Drawing.Size(570, 172);
-            this.app_layer_txtbx.TabIndex = 3;
+            this.app_lb.FormattingEnabled = true;
+            this.app_lb.Location = new System.Drawing.Point(12, 370);
+            this.app_lb.Name = "app_lb";
+            this.app_lb.Size = new System.Drawing.Size(822, 173);
+            this.app_lb.TabIndex = 3;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(594, 576);
-            this.Controls.Add(this.app_layer_txtbx);
-            this.Controls.Add(this.transport_txtbx);
-            this.Controls.Add(this.ip_txtbx);
+            this.ClientSize = new System.Drawing.Size(846, 586);
+            this.Controls.Add(this.app_lb);
+            this.Controls.Add(this.trans_lb);
+            this.Controls.Add(this.ip_lb);
             this.Controls.Add(this.start_btn);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.Button start_btn;
-        private System.Windows.Forms.TextBox ip_txtbx;
-        private System.Windows.Forms.TextBox transport_txtbx;
-        private System.Windows.Forms.TextBox app_layer_txtbx;
+        private System.Windows.Forms.ListBox ip_lb;
+        private System.Windows.Forms.ListBox trans_lb;
+        private System.Windows.Forms.ListBox app_lb;
     }
 }
 
