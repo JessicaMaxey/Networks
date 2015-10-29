@@ -22,23 +22,20 @@ namespace IPPacketAnalysis
 
         private void start_btn_Click(object sender, EventArgs e)
         {
-            //IPHostEntry ip_host_info = Dns.GetHostEntry("");
             IPHostEntry ip_host_info = Dns.Resolve(Dns.GetHostName());
             IPAddress ip_address = ip_host_info.AddressList[0];
             IPEndPoint end_point = new IPEndPoint(ip_address, 0);
 
             Socket com_sock = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            //com_sock.Connect(end_point);
             com_sock.Bind(end_point);
 
             NetworkStream net_stream = new NetworkStream(com_sock);
-            
+
+            com_sock.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.HeaderIncluded, 1);
+
             StringBuilder derp = new StringBuilder();
-            while (true)
-            {
-                 derp.Append(net_stream.ReadByte());
-            }
+
         }
     }
 }
