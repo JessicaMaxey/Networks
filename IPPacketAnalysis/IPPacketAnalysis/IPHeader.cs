@@ -112,7 +112,6 @@ namespace IPPacketAnalysis
             }
         } 
 
-
         public string HeaderLength
         {
             get
@@ -133,8 +132,10 @@ namespace IPPacketAnalysis
         {
             get
             {
-                return string.Format("0x{0:x2} ({1})", differentiated_services);
+                    return string.Format("0x{0:x2} ({1})", differentiated_services, differentiated_services);
             }
+            
+
         }
         
         public string DataOffAndFlags
@@ -171,7 +172,6 @@ namespace IPPacketAnalysis
             }
 
         }
-
 
         public string TTL
         {

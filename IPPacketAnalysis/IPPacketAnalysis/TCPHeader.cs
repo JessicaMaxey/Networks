@@ -86,7 +86,7 @@ namespace IPPacketAnalysis
         }
 
 
-        public string SoursePort
+        public string SourcePort
         {
             get
             {
