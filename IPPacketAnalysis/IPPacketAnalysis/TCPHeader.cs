@@ -35,7 +35,7 @@ namespace IPPacketAnalysis
         //Length of data
         private int message_length;
         //data carried by TCP packet
-        private byte[] TCP_data = new byte[4096];
+        private byte[] tcp_data = new byte[4096];
 
 
         public TCPHeader (byte[] byte_data, int received)
@@ -77,7 +77,7 @@ namespace IPPacketAnalysis
                 message_length = (int)(received - byte_header_length);
 
                 //stores the tcp message data in this array
-                Array.Copy(byte_data, byte_header_length, TCP_data, 0, received - byte_header_length);
+                Array.Copy(byte_data, byte_header_length, tcp_data, 0, received - byte_header_length);
             }
             catch(Exception e)
             {
@@ -229,7 +229,7 @@ namespace IPPacketAnalysis
         {
             get
             {
-                return TCP_data;
+                return tcp_data;
             }
         }
     }
