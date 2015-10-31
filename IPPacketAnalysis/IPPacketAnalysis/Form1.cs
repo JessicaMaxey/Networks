@@ -42,10 +42,7 @@ namespace IPPacketAnalysis
                     start_btn.Text = "Stop";
                     keep_collecting = true;
 
-                    int cout_receive_bytes;
-
                     IPHostEntry ip_host_info = Dns.Resolve(Dns.GetHostName());
-
 
                     main_socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
 
@@ -68,9 +65,9 @@ namespace IPPacketAnalysis
                 }
                 
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                MessageBox.Show(e.Message, "Connection Issue", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -101,19 +98,22 @@ namespace IPPacketAnalysis
         private void ParsePacket (byte[] byte_data, int received)
         {
             //creates IP header
-            IP(byte_data, received);
+            IPHeader ipheader = new IPHeader(byte_data, received);
+            IP(ipheader);
 
-            switch(protocol)
+            switch (ipheader.Protocol)
             {
-                case 6:
+                case "TCP":
                     {
-                        TCP(byte_data, received);
+                        TCPHeader tcpheader = new TCPHeader(ipheader.IPData, ipheader.MessageLength);
+                        TCP(tcpheader);
                     }
                     break;
 
-                case 17:
+                case "UDP":
                     {
-                        UDP(byte_data, received);
+                        UDPHeader udpheader = new UDPHeader(ipheader.IPData, ipheader.MessageLength);
+                        UDP(udpheader);
                     }
                     break;
 
@@ -125,136 +125,136 @@ namespace IPPacketAnalysis
 
         }
 
-        private void IP (byte[] byte_data, int received)
+        private void IP (IPHeader ipheader)
         {
-            IPHeader ipheader = new IPHeader(byte_data, received);
-
             //Take the IP packet apart
-            packet_counter++;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
-
-
-            int version = byte_data[0] >> 4;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Version: " + version); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Version: " + ipheader.VersionAndHeaderLength); }));
-
-            int hlen = byte_data[0] % 16;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Header Length: " + hlen); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Header Length: " + ipheader.HeaderLength); }));
-
-
-            int precedence = byte_data[1] >> 5;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Precedence: " + precedence); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Differentied Services: " + ipheader.DifferentiatedServices); }));
-
-
-            int delay = (byte_data[1] >> 4) % 2;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Delay: " + delay); }));
-
-
-            int throughput = (byte_data[1] >> 3) % 2;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Throughput: " + throughput); }));
-
-
-            int reliability = (byte_data[1] >> 2) % 2;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Reliability: " + reliability); }));
-
-
-            int totalLength = (byte_data[2] << 8) + byte_data[3];
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Total Length: " + totalLength); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Total Length: " + ipheader.TotalLength); }));
-
-
-            int identification = (byte_data[4] << 8) + byte_data[5];
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Identification: " + identification); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Identification: " + ipheader.Identification); }));
-
-
-            int fragFlag1 = (byte_data[6] >> 6) % 2;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation flag #1: " + fragFlag1); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation flag #1: " + ipheader.DataOffAndFlags); }));
-
-
-            int fragFlag2 = (byte_data[6] >> 5) % 2;
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation flag #2: " + fragFlag2); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation flag #2: " + ipheader.DataOffAndFlags); }));
-
-
-            int fragOffset = ((byte_data[6] % 64) << 8) + byte_data[7];
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation Offset: " + fragOffset); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation Offset: " + ipheader.FragmentationOffset); }));
-
-
-
-            int timeToLive = byte_data[8];
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Time To Live: " + timeToLive); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Time To Live: " + ipheader.TTL); }));
-
-
-            protocol = byte_data[9];
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Protocol: " + protocol); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Protocol: " + ipheader.Protocol); }));
-
-
-            int headerCheck = (byte_data[10] << 8) + byte_data[11];
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Header Checksum: " + headerCheck); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Header Checksum: " + ipheader.Checksum); }));
-
-
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Source IP Address: " + byte_data[12] + "." + byte_data[13] + "." + byte_data[14] + "." + byte_data[15]); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Source IP Address: " + ipheader.SourceIPAddress); }));
-
-
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Destination IP Address: " + byte_data[16] + "." + byte_data[17] + "." + byte_data[18] + "." + byte_data[19]); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Destination IP Address: " + ipheader.DestinationIPAddress); }));
-
-
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("IP options: " + byte_data[20] + " " + byte_data[21] + " " + byte_data[22]); }));
-
-
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Data follows (in decimal): "); }));
-            StringBuilder dataLinebyte_data = new StringBuilder();
-            //NOTE: we leave out the padding byte #23 in the display
-            for (int i = 24; i < totalLength; i++)
-            {
-                dataLinebyte_data.Append(byte_data[i]);
-                dataLinebyte_data.Append(" ");
-            }
-            String dataLine = dataLinebyte_data.ToString();
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add(dataLine); }));
-            ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
-
-
-
-        }
-
-        private void TCP(byte[] byte_data, int received)
-        {
-            TCPHeader tcp_header = new TCPHeader(byte_data, received);
             try
             {
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Source Port: " + tcp_header.SourcePort); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Destination Port: " + tcp_header.DestinPort); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Sequence Number: " + tcp_header.SequenceNumber); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Acknowledgement Number: " + tcp_header.AcknowledgementNumber); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Data offset and Flags: " + tcp_header.DataOffsetFlags); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Window Size: " + tcp_header.WindowSize); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Checksum: " + tcp_header.Checksum); }));
-                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Urgent Pointer: " + tcp_header.UrgentPointer); }));
+                packet_counter++;
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
 
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Version: " + ipheader.VersionAndHeaderLength); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Header Length: " + ipheader.HeaderLength); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Differentied Services: " + ipheader.DifferentiatedServices); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Total Length: " + ipheader.TotalLength); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Identification: " + ipheader.Identification); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation flag #1: " + ipheader.DataOffAndFlags); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation flag #2: " + ipheader.DataOffAndFlags); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Fragmentation Offset: " + ipheader.FragmentationOffset); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Time To Live: " + ipheader.TTL); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Protocol: " + ipheader.Protocol); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Header Checksum: " + ipheader.Checksum); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Source IP Address: " + ipheader.SourceIPAddress.ToString()); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("Destination IP Address: " + ipheader.DestinationIPAddress.ToString()); }));
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("IP options: " + ipheader.Options); }));
 
+                ip_lb.Invoke(new MethodInvoker(() => { ip_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
+            }
+            catch(Exception e)
+            {
+                MessageBox.Show(e.Message, "IP", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
 
+        private void TCP(TCPHeader tcpheader)
+        {
+            try
+            {
+                string data_list = null;
 
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXXXXXXXXX  TCP  XXXXXXXXXXXX"); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Source Port: " + tcpheader.SourcePort); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Destination Port: " + tcpheader.DestinPort); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Sequence Number: " + tcpheader.SequenceNumber); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Acknowledgement Number: " + tcpheader.AcknowledgementNumber); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Data offset and Flags: " + tcpheader.DataOffsetFlags); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Window Size: " + tcpheader.WindowSize); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Checksum: " + tcpheader.Checksum); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Urgent Pointer: " + tcpheader.UrgentPointer); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Options: " + tcpheader.Options); }));
+
+                if (tcpheader.MessageLength < 4096)
+                {
+                    StringBuilder hex_data = new StringBuilder();
+                    for (int i = 24; i < tcpheader.MessageLength; i++)
+                    {
+                        hex_data.Append(tcpheader.TCPData[i]);
+                        hex_data.Append(" ");
+                    }
+                    data_list = hex_data.ToString();
+                }
+
+                app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
+                if (data_list == "")
+                {
+                    app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("No Data"); }));
+                }
+                else if (data_list != null)
+                {
+                    app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add(data_list); }));
+                }
+                else
+                {
+                    app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("Data was too large"); }));
+                }
+                app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
+
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
             }
             catch (Exception e)
             {
-
+                MessageBox.Show(e.Message, "TCP", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void UDP(byte[] byte_data, int received)
+        private void UDP(UDPHeader udpheader)
         {
+            try
+            {
+                string data_list = null;
 
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXXXXXXXXX  UDP  XXXXXXXXXXXX"); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Source Port: " + udpheader.SourcePort); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Destination Port: " + udpheader.DestinationPort); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Length: " + udpheader.Length); }));
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Checksum: " + udpheader.Checksum); }));
+
+
+                if (udpheader.Length < 4096)
+                {
+                    StringBuilder hex_data = new StringBuilder();
+                    for (int i = 24; i < udpheader.Length; i++)
+                    {
+                        hex_data.Append(udpheader.UDPData[i]);
+                        hex_data.Append(" ");
+                    }
+                    data_list = hex_data.ToString();
+                }
+
+                app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
+                if (data_list == "")
+                {
+                    app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("No Data"); }));
+                }
+                else if (data_list != null)
+                {
+                    app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add(data_list); }));
+                }
+                else
+                {
+                    app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("Data was too large"); }));
+                }
+                app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
+
+
+                trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "UDP", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
     }

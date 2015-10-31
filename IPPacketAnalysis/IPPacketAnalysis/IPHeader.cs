@@ -16,11 +16,11 @@ namespace IPPacketAnalysis
         //8 bits
         private byte differentiated_services;
         //16 bits
-        private int total_length;
+        private uint total_length;
         //16 bits
-        private int identification;
+        private uint identification;
         //8 bits
-        private int data_offset_and_flags;
+        private uint data_offset_and_flags;
         //8 bits
         private byte ttl;
         //8 bits
@@ -28,9 +28,11 @@ namespace IPPacketAnalysis
         //16 bits
         private int checksum;
         //32 bits
-        private int source_ip_address;
+        private uint source_ip_address;
         //32 bits
-        private int destination_ip_address;
+        private uint destination_ip_address;
+        //32 bits
+        private byte[] options;
 
         //header length
         private byte header_length;
@@ -53,13 +55,13 @@ namespace IPPacketAnalysis
                 differentiated_services = binary_reader.ReadByte();
 
                 //next 16 bits  contain the total length of the packet
-                total_length = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                total_length = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 16 bits contains identification 
-                identification = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                identification = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 16 bits contain the data offset and the flags
-                data_offset_and_flags = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                data_offset_and_flags = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 8 bits contain the TTL value
                 ttl = binary_reader.ReadByte();
@@ -71,11 +73,13 @@ namespace IPPacketAnalysis
                 checksum = IPAddress.HostToNetworkOrder(binary_reader.ReadInt16());
 
                 //next 32 bits containthe source IP address
-                source_ip_address = (int)binary_reader.ReadInt32();
+                source_ip_address = (uint)binary_reader.ReadInt32();
                 
                 //next 32 bits containthe destination IP address
-                destination_ip_address = (int)binary_reader.ReadInt32();
+                destination_ip_address = (uint)binary_reader.ReadInt32();
 
+                //next 32 bits for IP options and padding
+                options = binary_reader.ReadBytes(3);
 
                 //get header length
                 header_length = version_and_header_length;
@@ -143,14 +147,14 @@ namespace IPPacketAnalysis
             get
             {
                 //get the 1st 3 bits of the flag to see if the data is to be fragmented or not
-                int flags = data_offset_and_flags >> 13;
+                uint flags = data_offset_and_flags >> 13;
                 if (flags == 2)
                 {
                     return "Don't fragment";
                 }
                 else if (flags == 1)
                 {
-                    return "More fragments to come";
+                    return "More fragments";
                 }
                 else
                 {
@@ -165,7 +169,7 @@ namespace IPPacketAnalysis
             get
             {
                 //last 13 bits of data offset field contains the fragmentation offset
-                int offset = data_offset_and_flags << 3;
+                uint offset = data_offset_and_flags << 3;
                 offset >>= 3;
 
                 return offset.ToString();
@@ -233,13 +237,29 @@ namespace IPPacketAnalysis
             }
         }
 
-        public int TotalLength
+        public uint TotalLength
         {
             get
             {
                 return total_length;
             }
         }
+
+        public string Options
+        {
+            get
+            {
+                string temp = null;
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    temp += options[i];
+                    temp += " ";
+                }
+                return temp;
+            }
+        }
+
 
         public byte[] IPData
         {

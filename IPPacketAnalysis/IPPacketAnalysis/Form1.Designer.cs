@@ -36,9 +36,9 @@
             // 
             // start_btn
             // 
-            this.start_btn.Location = new System.Drawing.Point(12, 549);
+            this.start_btn.Location = new System.Drawing.Point(12, 542);
             this.start_btn.Name = "start_btn";
-            this.start_btn.Size = new System.Drawing.Size(75, 23);
+            this.start_btn.Size = new System.Drawing.Size(1047, 39);
             this.start_btn.TabIndex = 0;
             this.start_btn.Text = "Start";
             this.start_btn.UseVisualStyleBackColor = true;
@@ -49,36 +49,36 @@
             this.ip_lb.FormattingEnabled = true;
             this.ip_lb.Location = new System.Drawing.Point(12, 12);
             this.ip_lb.Name = "ip_lb";
-            this.ip_lb.Size = new System.Drawing.Size(822, 173);
+            this.ip_lb.Size = new System.Drawing.Size(345, 524);
             this.ip_lb.TabIndex = 1;
             // 
             // trans_lb
             // 
             this.trans_lb.FormattingEnabled = true;
-            this.trans_lb.Location = new System.Drawing.Point(12, 191);
+            this.trans_lb.Location = new System.Drawing.Point(363, 12);
             this.trans_lb.Name = "trans_lb";
-            this.trans_lb.Size = new System.Drawing.Size(822, 173);
+            this.trans_lb.Size = new System.Drawing.Size(345, 524);
             this.trans_lb.TabIndex = 2;
             // 
             // app_lb
             // 
             this.app_lb.FormattingEnabled = true;
-            this.app_lb.Location = new System.Drawing.Point(12, 370);
+            this.app_lb.Location = new System.Drawing.Point(714, 12);
             this.app_lb.Name = "app_lb";
-            this.app_lb.Size = new System.Drawing.Size(822, 173);
+            this.app_lb.Size = new System.Drawing.Size(345, 524);
             this.app_lb.TabIndex = 3;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(846, 586);
+            this.ClientSize = new System.Drawing.Size(1072, 586);
             this.Controls.Add(this.app_lb);
             this.Controls.Add(this.trans_lb);
             this.Controls.Add(this.ip_lb);
             this.Controls.Add(this.start_btn);
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Packet Sniffer";
             this.ResumeLayout(false);
 
         }

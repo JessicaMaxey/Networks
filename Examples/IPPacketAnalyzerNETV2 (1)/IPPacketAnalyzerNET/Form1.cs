@@ -146,12 +146,14 @@ namespace IPPacketAnalyzerNET
             lbPackets.Invoke(new MethodInvoker(() => { lbPackets.Items.Add("Total Length: " + totalLength); }));
             int identification = (buf[4] << 8) + buf[5];
             lbPackets.Invoke(new MethodInvoker(() => { lbPackets.Items.Add("Identification: " + identification); }));
+
             int fragFlag1 = (buf[6] >> 6) % 2;
             lbPackets.Invoke(new MethodInvoker(() => { lbPackets.Items.Add("Fragmentation flag #1: " + fragFlag1); }));
             int fragFlag2 = (buf[6] >> 5) % 2;
             lbPackets.Invoke(new MethodInvoker(() => { lbPackets.Items.Add("Fragmentation flag #2: " + fragFlag2); }));
             int fragOffset = ((buf[6] % 64) << 8) + buf[7];
             lbPackets.Invoke(new MethodInvoker(() => { lbPackets.Items.Add("Fragmentation Offset: " + fragOffset); }));
+
             int timeToLive = buf[8];
             lbPackets.Invoke(new MethodInvoker(() => { lbPackets.Items.Add("Time To Live: " + timeToLive); }));
             int protocol = buf[9];

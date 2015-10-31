@@ -13,27 +13,29 @@ namespace IPPacketAnalysis
     class TCPHeader
     {
         //16 bits
-        private int source_port;
+        private uint source_port;
         //16 bits
-        private int destin_port;
+        private uint destin_port;
         //32 bits
-        private int sequence_number;
+        private uint sequence_number;
         //32 bits
-        private int acknowledgement_number;
+        private uint acknowledgement_number;
         //16 bits
-        private int data_offset_and_flags;
+        private uint data_offset_and_flags;
         //16 bits
-        private int window_size;
+        private uint window_size;
         //16 bits
         private int checksum;
         //16 bits
-        private int urgent_pointer;
+        private uint urgent_pointer;
+        //32 bits
+        private byte[] options;
 
         //Header length
         private byte byte_header_length;
 
         //Length of data
-        private int message_length;
+        private uint message_length;
         //data carried by TCP packet
         private byte[] tcp_data = new byte[4096];
 
@@ -46,38 +48,49 @@ namespace IPPacketAnalysis
                 BinaryReader binary_reader = new BinaryReader(memory_stream);
 
                 //first 16 bits contain the source port
-                source_port = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                source_port = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 16 bits contain the destination port
-                destin_port = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                destin_port = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 32 bits contain the sequence number
-                sequence_number = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt32());
+                sequence_number = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt32());
 
                 //next 32 bits contain the acknoledgement number
-                acknowledgement_number = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt32());
+                acknowledgement_number = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt32());
 
                 //next 16 bits contain the date offset and flags
-                data_offset_and_flags = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                data_offset_and_flags = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 16 contain the window size
-                window_size = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                window_size = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
                 //next 16 contain the checksum
                 checksum = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
 
-                //the last 16 of the header contains the urgent pointer
-                urgent_pointer = (int)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+                //next 16 of the header contains the urgent pointer
+                urgent_pointer = (uint)IPAddress.NetworkToHostOrder(binary_reader.ReadInt16());
+
+                //next 32 bits for IP options and padding
+                options = binary_reader.ReadBytes(3);
 
                 //calculates the header length so that we can find the tcp data and scoop it out
                 byte_header_length = (byte)(data_offset_and_flags >> 12);
                 byte_header_length *= 4;
 
-                //stores how long the message is
-                message_length = (int)(received - byte_header_length);
 
-                //stores the tcp message data in this array
-                Array.Copy(byte_data, byte_header_length, tcp_data, 0, received - byte_header_length);
+                //stores how long the message is
+                message_length = (uint)(received - byte_header_length);
+
+                if (message_length < 4096)
+                {
+                    //stores the tcp message data in this array
+                    Array.Copy(byte_data, byte_header_length, tcp_data, 0, received - byte_header_length);
+                }
+                else
+                {
+                    tcp_data[0] = Convert.ToByte(0);
+                }
             }
             catch(Exception e)
             {
@@ -129,7 +142,7 @@ namespace IPPacketAnalysis
             {
                 //The last 6 bits of data offset and flags contain the flag values
                 //so we must extract them from the data
-                int flags = data_offset_and_flags & 0x3F;
+                uint flags = data_offset_and_flags & 0x3F;
 
                 //creating the format of the flag
                 string str_flags = string.Format("0x{0:x2} (", flags);
@@ -216,11 +229,26 @@ namespace IPPacketAnalysis
         }
 
 
-        public int MessageLength
+        public uint MessageLength
         {
             get
             {
                 return message_length;
+            }
+        }
+
+        public string Options
+        {
+            get
+            {
+                string temp = null;
+
+                for (int i = 0; i < options.Length; i++)
+                {
+                    temp += options[i];
+                    temp += " ";
+                }
+                return temp;
             }
         }
 
