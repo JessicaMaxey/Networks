@@ -82,9 +82,10 @@ namespace IPPacketAnalysis
                 //stores how long the message is
                 message_length = (uint)(received - byte_header_length);
 
+                //keeps the message from being too long and throwing an exception
                 if (message_length < 4096)
                 {
-                    //stores the tcp message data in this array
+                    //stores the http message data in this array
                     Array.Copy(byte_data, byte_header_length, tcp_data, 0, received - byte_header_length);
                 }
                 else
@@ -148,6 +149,8 @@ namespace IPPacketAnalysis
                 string str_flags = string.Format("0x{0:x2} (", flags);
 
                 //now check to see if the bits are set
+                //and store the relivent string flags and not thier ambiguous 
+                //numbers
                 if((flags & 0x01) != 0)
                 {
                     str_flags += "FIN, ";
@@ -201,7 +204,7 @@ namespace IPPacketAnalysis
         {
             get
             {
-                //format in hexdecimal 
+                //format in hexdecimal
                 return string.Format("0x{0:x2}", checksum);
             }
         }
@@ -242,7 +245,7 @@ namespace IPPacketAnalysis
             get
             {
                 string temp = null;
-
+                //lumps all the option values into on string
                 for (int i = 0; i < options.Length; i++)
                 {
                     temp += options[i];
@@ -257,6 +260,16 @@ namespace IPPacketAnalysis
         {
             get
             {
+                //stores all the rest of the data that is not in the TCPheader to be later formated into
+                //http data
+                //string temp = null;
+                ////lumps all the htm values into on string formated to hexdec
+                //for (int i = 0; i < tcp_data.Length; i++)
+                //{
+                //    temp += string.Format("0x{0:x2}", tcp_data[i]);
+                //    temp += " ";
+                //}
+                //return temp;
                 return tcp_data;
             }
         }

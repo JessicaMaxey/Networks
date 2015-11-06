@@ -36,12 +36,13 @@ namespace IPPacketAnalysis
         {
             try
             {
-                //might need to add bool to stop collecting.
+                //start collecting data
                 if (!keep_collecting)
                 {
                     start_btn.Text = "Stop";
                     keep_collecting = true;
 
+                    //set up for the socket
                     IPHostEntry ip_host_info = Dns.Resolve(Dns.GetHostName());
 
                     main_socket = new Socket(AddressFamily.InterNetwork, SocketType.Raw, ProtocolType.IP);
@@ -55,10 +56,12 @@ namespace IPPacketAnalysis
 
                     main_socket.IOControl(IOControlCode.ReceiveAll, IN, OUT);
 
+                    //start getting data
                     main_socket.BeginReceive(byte_data, 0, byte_data.Length, SocketFlags.None, new AsyncCallback(ReceivePacket), this);
                 }
                 else
                 {
+                    //stop collecting data
                     start_btn.Text = "Start";
                     keep_collecting = false;
                     main_socket.Close();
@@ -75,12 +78,17 @@ namespace IPPacketAnalysis
         {
             try
             {
+                //get the data received
                 int received = main_socket.EndReceive(ar);
 
+                //send the data off to be processed into IP header
+                //TCP/UDP header, and the to left over hmtl data
                 ParsePacket(byte_data, received);
 
+                //check to see if still collecting data
                 if (keep_collecting)
                 {
+                    //collect the next message in line
                     byte_data = new byte[4096];
                     main_socket.BeginReceive(byte_data, 0, byte_data.Length, SocketFlags.None, new AsyncCallback(ReceivePacket), this);
                 }
@@ -105,6 +113,8 @@ namespace IPPacketAnalysis
             {
                 case "TCP":
                     {
+                        //sends the left overs from the IP header into TCP if that is the protocol
+                        //found insided the ip header
                         TCPHeader tcpheader = new TCPHeader(ipheader.IPData, ipheader.MessageLength);
                         TCP(tcpheader);
                     }
@@ -112,6 +122,8 @@ namespace IPPacketAnalysis
 
                 case "UDP":
                     {
+                        //sends the left overs from the IP header into UDP if that is the protocol
+                        //found insided the ip header
                         UDPHeader udpheader = new UDPHeader(ipheader.IPData, ipheader.MessageLength);
                         UDP(udpheader);
                     }
@@ -127,7 +139,7 @@ namespace IPPacketAnalysis
 
         private void IP (IPHeader ipheader)
         {
-            //Take the IP packet apart
+            //output the IP header data
             try
             {
                 packet_counter++;
@@ -158,6 +170,7 @@ namespace IPPacketAnalysis
 
         private void TCP(TCPHeader tcpheader)
         {
+            //output the TCP header data
             try
             {
                 string data_list = null;
@@ -174,6 +187,8 @@ namespace IPPacketAnalysis
                 trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Urgent Pointer: " + tcpheader.UrgentPointer); }));
                 trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Options: " + tcpheader.Options); }));
 
+
+                //get the left over data, and get ready to output the http data
                 if (tcpheader.MessageLength < 4096)
                 {
                     StringBuilder hex_data = new StringBuilder();
@@ -185,20 +200,25 @@ namespace IPPacketAnalysis
                     data_list = hex_data.ToString();
                 }
 
+                //Outputing the http data to the data label
                 app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
                 if (data_list == "")
                 {
+                    //in case of no data
                     app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("No Data"); }));
                 }
                 else if (data_list != null)
                 {
+                    //in case of data
                     app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add(data_list); }));
                 }
                 else
                 {
+                    //in case the data was too large for the buffer
                     app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("Data was too large"); }));
                 }
                 app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
+
 
                 trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));
             }
@@ -210,6 +230,7 @@ namespace IPPacketAnalysis
 
         private void UDP(UDPHeader udpheader)
         {
+            //output the UDP header data
             try
             {
                 string data_list = null;
@@ -222,6 +243,7 @@ namespace IPPacketAnalysis
                 trans_lb.Invoke(new MethodInvoker(() => { trans_lb.Items.Add("Checksum: " + udpheader.Checksum); }));
 
 
+                //get the left over data, and get ready to output the http data
                 if (udpheader.Length < 4096)
                 {
                     StringBuilder hex_data = new StringBuilder();
@@ -233,17 +255,21 @@ namespace IPPacketAnalysis
                     data_list = hex_data.ToString();
                 }
 
+                //Outputing the http data to the data label
                 app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " ARRIVING XXXXX"); }));
                 if (data_list == "")
                 {
+                    //in case of no data
                     app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("No Data"); }));
                 }
                 else if (data_list != null)
                 {
+                    //in case of data
                     app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add(data_list); }));
                 }
                 else
                 {
+                    //in case the data was too large for the buffer
                     app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("Data was too large"); }));
                 }
                 app_lb.Invoke(new MethodInvoker(() => { app_lb.Items.Add("XXXXX PACKET #" + packet_counter + " COMPLETE XXXXX"); }));

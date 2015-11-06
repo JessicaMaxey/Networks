@@ -101,6 +101,7 @@ namespace IPPacketAnalysis
         {
             get
             {
+                //format the ambiguous number to a relivent string value
                 if ((version_and_header_length >> 4) == 4)
                 {
                     return "IPv4";
@@ -136,7 +137,8 @@ namespace IPPacketAnalysis
         {
             get
             {
-                    return string.Format("0x{0:x2} ({1})", differentiated_services, differentiated_services);
+                //format in hexdecimal 
+                return string.Format("0x{0:x2} ({1})", differentiated_services, differentiated_services);
             }
             
 
@@ -189,7 +191,9 @@ namespace IPPacketAnalysis
         {
             get
             {
-                if(protocol == 6)
+                //format the ambiguous number to a relivent string value
+
+                if (protocol == 6)
                 {
                     return "TCP";
                 }
@@ -208,6 +212,7 @@ namespace IPPacketAnalysis
         {
             get
             {
+                //format in hexdecimal 
                 return string.Format("0x:{0:x2}", checksum);
             }
 
@@ -225,6 +230,7 @@ namespace IPPacketAnalysis
         {
             get
             {
+                //must return IPAddress so that it is in the correct format xxx.xxx.xxx.xxx
                 return new IPAddress(source_ip_address);
             }
         }
@@ -233,6 +239,7 @@ namespace IPPacketAnalysis
         {
             get
             {
+                //must return IPAddress so that it is in the correct format xxx.xxx.xxx.xxx
                 return new IPAddress(destination_ip_address);
             }
         }
@@ -250,7 +257,7 @@ namespace IPPacketAnalysis
             get
             {
                 string temp = null;
-
+                //lumps all the option values into on string
                 for (int i = 0; i < options.Length; i++)
                 {
                     temp += options[i];
@@ -265,6 +272,8 @@ namespace IPPacketAnalysis
         {
             get
             {
+                //stores all the rest of the data that is not in the IPHeader to be later formated into
+                //TCP data or UDP data
                 return ip_data;
             }
         }
