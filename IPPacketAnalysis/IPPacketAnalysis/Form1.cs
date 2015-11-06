@@ -279,7 +279,7 @@ namespace IPPacketAnalysis
             }
             catch (Exception e)
             {
-                MessageBox.Show(e.Message, "UDP", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(e.Message + "Besure you are running in Administrator Mode", "UDP", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

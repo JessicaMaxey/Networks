@@ -50,6 +50,7 @@
             // ip_lb
             // 
             this.ip_lb.FormattingEnabled = true;
+            this.ip_lb.HorizontalScrollbar = true;
             this.ip_lb.Location = new System.Drawing.Point(12, 21);
             this.ip_lb.Name = "ip_lb";
             this.ip_lb.Size = new System.Drawing.Size(345, 524);
@@ -58,6 +59,7 @@
             // trans_lb
             // 
             this.trans_lb.FormattingEnabled = true;
+            this.trans_lb.HorizontalScrollbar = true;
             this.trans_lb.Location = new System.Drawing.Point(363, 21);
             this.trans_lb.Name = "trans_lb";
             this.trans_lb.Size = new System.Drawing.Size(345, 524);
@@ -66,6 +68,7 @@
             // app_lb
             // 
             this.app_lb.FormattingEnabled = true;
+            this.app_lb.HorizontalScrollbar = true;
             this.app_lb.Location = new System.Drawing.Point(714, 21);
             this.app_lb.Name = "app_lb";
             this.app_lb.Size = new System.Drawing.Size(345, 524);
