@@ -1,0 +1,15 @@
+﻿POST /globalweather.asmx HTTP/1.1
+Host: www.webservicex.net
+Content-Type: text/xml; charset=utf-8
+Content-Length: 571
+SOAPAction: "http://www.webserviceX.NET/GetCitiesByCountry"
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:xsi=http://www.w3.org/2001/XMLSchema-instance 
+    xmlns:xsd=http://www.w3.org/2001/XMLSchema 
+    xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Body>
+    <GetCitiesByCountry xmlns="http://www.webserviceX.NET">
+      <CountryName>Egypt</CountryName>
+    </GetCitiesByCountry>
+  </soap:Body>
+</soap:Envelope>
