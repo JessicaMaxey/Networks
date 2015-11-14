@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Compression_and_Remote_Objects_Server")]
+[assembly: AssemblyTitle("Compression_Server")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Compression_and_Remote_Objects_Server")]
+[assembly: AssemblyProduct("Compression_Server")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0716037b-56a4-4b0b-8838-f628400cc6cb")]
+[assembly: Guid("2603bac5-c103-4904-9761-be359cb23c4b")]
 
 // Version information for an assembly consists of the following four values:
 //

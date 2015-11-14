@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Compression_and_Remote_Objects_Server.Properties
+namespace Compression_Client.Properties
 {
 
 

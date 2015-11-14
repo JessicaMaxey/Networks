@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Compression_and_Remote_Objects_Server
+namespace Compression_Client
 {
     static class Program
     {
