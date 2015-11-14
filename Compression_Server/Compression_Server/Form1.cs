@@ -35,6 +35,7 @@ namespace Compression_Server
         {
             while (true)
             {
+                //visit https://stackoverflow.com/questions/5653743/c-sharp-httpwebrequest-with-xml-structured-data
                 listener.Prefixes.Add("http://127.0.0.1:8080/");
                 listener.Start();
                 textBox1.Text = "listening.../n/r";

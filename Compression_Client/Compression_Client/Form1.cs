@@ -18,9 +18,9 @@ namespace Compression_Client
     public partial class Form1 : Form
     {
         HttpClient client;
-        SOAP soap_message = new SOAP();
+        SOAP soap_message;
         string ip_address = "";
-        int port = 0;
+        string port = "";
 
         public Form1()
         {
@@ -34,21 +34,28 @@ namespace Compression_Client
 
         private async void SendMessage ()
         {
+            //Get file and create xml SOAP message to be sent
+            soap_message = new SOAP(file_txtbx.Text);
+
             //create http client
             HttpClient client = new HttpClient();
 
-            string test = "request";
-            ip_address = "127.0.0.1";
-            port = 8080;
+            ip_address = ip_address_txtbx.Text;
+            port = port_txtbx.Text;
 
             //create connection address
             Uri uri = new Uri(@"http://" + ip_address + ":" + port + @"/");
 
-            var content = new StringContent("herpaderpsendamessage");
+            //sets the contents of the message
+            var content = new ByteArrayContent(soap_message.GetSoapMessage);
 
             var httpResponse = await client.PostAsync(uri.OriginalString, content);
             textBox1.Text = await httpResponse.Content.ReadAsStringAsync();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
