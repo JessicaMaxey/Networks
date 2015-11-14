@@ -31,11 +31,6 @@ namespace Compression_Server
 
         }
 
-        private void Run()
-        {
-            //Listen();
-        }
-
         private void Listen(HttpListener listener)
         {
             while (true)
