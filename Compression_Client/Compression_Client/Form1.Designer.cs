@@ -54,8 +54,7 @@
             this.file_txtbx.Name = "file_txtbx";
             this.file_txtbx.Size = new System.Drawing.Size(417, 20);
             this.file_txtbx.TabIndex = 1;
-            this.file_txtbx.Text = "C:\\Users\\Jess\\Documents\\SCHOOL\\Senior Project\\SeniorProjectProposal Version 3.doc" +
-    "x";
+            this.file_txtbx.Text = "C:\\Users\\Jessica\\Documents\\Test\\text.txt.txt";
             this.file_txtbx.TextChanged += new System.EventHandler(this.file_txtbx_TextChanged);
             // 
             // label1
