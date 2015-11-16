@@ -46,27 +46,31 @@ namespace Compression_Client
             Uri uri = new Uri(@"http://" + ip_address + ":" + port + @"/");
 
             //create connection
-            var client = WebRequest.Create(uri);
+            WebRequest client = WebRequest.Create(uri);
+            WebResponse response;
             //client.Timeout = 300000;
             client.Method = "POST";
             client.ContentType = "text/xml;charset=UTF-8";
 
             //send SOAP message
-            using (var writer = new StreamWriter(client.GetRequestStream()))
+            using (StreamWriter writer = new StreamWriter(client.GetRequestStream()))
             {
+               
                 writer.WriteLine(soap_message.GetSoapMessage.ToString());
+                
                 writer.Close();
             }
 
 
+
+
             //get response 
-            using (var response = client.GetResponse())
+            using (response = client.GetResponse())
             {
                 client.GetRequestStream().Close();
                 if (response != null)
                 {
-                    using (var answerReader =
-                                new StreamReader(response.GetResponseStream()))
+                    using (var answerReader = new StreamReader(response.GetResponseStream()))
                     {
                         var readString = answerReader.ReadToEnd();
                         textBox1.Text = readString.ToString();

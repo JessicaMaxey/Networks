@@ -77,6 +77,8 @@ namespace Compression_Client
 
             XNamespace soap_envelope = "http://schemas.xmlsoap.org/soap/envelope/";
 
+
+
             //create the xml file to be sent out
             soap_message =  new XDocument(
                                 new XDeclaration("1.0", "utf-8", string.Empty),
