@@ -19,7 +19,7 @@ namespace Compression_Client
     class SOAP
     {
         string file_name = "";
-        XElement soap_message;
+        XDocument soap_message;
 
         public SOAP (string filename)
         {
@@ -41,6 +41,7 @@ namespace Compression_Client
 
             reader.Close();
 
+
             //sets the size of the array to however many characters there are in the file
             byte[] byte_array = new byte[num_of_letters];
 
@@ -55,29 +56,51 @@ namespace Compression_Client
             }
 
 
+            string file_name_text = null;
+            char[] just_name = file_name.ToCharArray();
+
+            for (int i = (file_name.Length - 1); i > 0; i--)
+            {
+                //goes backwards and finds where the name begins
+                if (just_name[i - 1] == '\\')
+                {
+                    while (i != file_name.Length)
+                    {
+                        //goes forwards and adds name to the end
+                        file_name_text += just_name[i];
+                        i++;
+                    }
+                    break;
+                }
+            }
+
+
+            XNamespace soap_envelope = "http://schemas.xmlsoap.org/soap/envelope/";
+
             //create the xml file to be sent out
-            soap_message =
-                new XElement("soap:Envelope",
-                    new XElement("soap:Header",
-                    new XElement("contentlength:" + byte_array.Length),
-                    new XElement("filename:" + filename)
-                                    ),
-                        new XElement("soap:Body",
-                        new XElement("contentmessage:" + byte_array)
-                                        )
-                            );
+            soap_message =  new XDocument(
+                                new XDeclaration("1.0", "utf-8", string.Empty),
+                                new XElement(soap_envelope + "Envelope",
+                                    new XAttribute(XNamespace.Xmlns + "soapenv", soap_envelope),
+                                    new XElement(soap_envelope + "Header",
+                                        new XAttribute("contentlength", byte_array.Length),
+                                        new XAttribute("filename", file_name_text)
+                                                    ),
+                                            new XElement(soap_envelope + "Body",
+                                                new XAttribute("contentmessage", byte_array)
+                                                        )
+                                                )
+                                            );
 
 
         }
 
 
-        public byte[] GetSoapMessage
+        public XDocument GetSoapMessage
         {
             get
             {
-                byte[] message = Encoding.UTF8.GetBytes(soap_message.ToString());
-
-                return message;
+                return soap_message;
             }
         }
 

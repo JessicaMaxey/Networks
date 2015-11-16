@@ -54,6 +54,9 @@
             this.file_txtbx.Name = "file_txtbx";
             this.file_txtbx.Size = new System.Drawing.Size(417, 20);
             this.file_txtbx.TabIndex = 1;
+            this.file_txtbx.Text = "C:\\Users\\Jess\\Documents\\SCHOOL\\Senior Project\\SeniorProjectProposal Version 3.doc" +
+    "x";
+            this.file_txtbx.TextChanged += new System.EventHandler(this.file_txtbx_TextChanged);
             // 
             // label1
             // 
@@ -82,6 +85,7 @@
             this.send_btn.TabIndex = 4;
             this.send_btn.Text = "Send";
             this.send_btn.UseVisualStyleBackColor = true;
+            this.send_btn.Click += new System.EventHandler(this.send_btn_Click);
             // 
             // ip_address_txtbx
             // 
@@ -89,6 +93,7 @@
             this.ip_address_txtbx.Name = "ip_address_txtbx";
             this.ip_address_txtbx.Size = new System.Drawing.Size(122, 20);
             this.ip_address_txtbx.TabIndex = 5;
+            this.ip_address_txtbx.Text = "127.0.0.1";
             // 
             // port_txtbx
             // 
@@ -96,6 +101,7 @@
             this.port_txtbx.Name = "port_txtbx";
             this.port_txtbx.Size = new System.Drawing.Size(71, 20);
             this.port_txtbx.TabIndex = 6;
+            this.port_txtbx.Text = "8080";
             // 
             // label2
             // 

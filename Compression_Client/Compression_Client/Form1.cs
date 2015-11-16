@@ -29,7 +29,6 @@ namespace Compression_Client
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            SendMessage();
         }
 
         private async void SendMessage ()
@@ -38,7 +37,7 @@ namespace Compression_Client
             soap_message = new SOAP(file_txtbx.Text);
 
             //create http client
-            HttpClient client = new HttpClient();
+            //HttpClient client = new HttpClient();
 
             ip_address = ip_address_txtbx.Text;
             port = port_txtbx.Text;
@@ -46,14 +45,53 @@ namespace Compression_Client
             //create connection address
             Uri uri = new Uri(@"http://" + ip_address + ":" + port + @"/");
 
-            //sets the contents of the message
-            var content = new ByteArrayContent(soap_message.GetSoapMessage);
+            //create connection
+            var client = WebRequest.Create(uri);
+            //client.Timeout = 300000;
+            client.Method = "POST";
+            client.ContentType = "text/xml;charset=UTF-8";
 
-            var httpResponse = await client.PostAsync(uri.OriginalString, content);
-            textBox1.Text = await httpResponse.Content.ReadAsStringAsync();
+            //send SOAP message
+            using (var writer = new StreamWriter(client.GetRequestStream()))
+            {
+                writer.WriteLine(soap_message.GetSoapMessage.ToString());
+                writer.Close();
+            }
+
+
+            //get response 
+            using (var response = client.GetResponse())
+            {
+                client.GetRequestStream().Close();
+                if (response != null)
+                {
+                    using (var answerReader =
+                                new StreamReader(response.GetResponseStream()))
+                    {
+                        var readString = answerReader.ReadToEnd();
+                        textBox1.Text = readString.ToString();
+                    }
+                }
+            }
+
+            ////sets the contents of the message
+            //var content = new ByteArrayContent(soap_message.GetSoapMessage);
+
+            //var httpResponse = await client.PostAsync(uri.OriginalString, content);
+            //textBox1.Text = await httpResponse.Content.ReadAsStringAsync();
         }
 
         private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void send_btn_Click(object sender, EventArgs e)
+        {
+            SendMessage();
+        }
+
+        private void file_txtbx_TextChanged(object sender, EventArgs e)
         {
 
         }
