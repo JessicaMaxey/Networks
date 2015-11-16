@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compression_Server_v2", "Compression_Server_v2\Compression_Server_v2.csproj", "{875AC4E0-73D6-4BF1-AD8F-DC4C19CED74F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compression_server", "Compression_server\Compression_server.csproj", "{620BA628-34DD-423C-8982-39DE2B6B0122}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{875AC4E0-73D6-4BF1-AD8F-DC4C19CED74F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{875AC4E0-73D6-4BF1-AD8F-DC4C19CED74F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{875AC4E0-73D6-4BF1-AD8F-DC4C19CED74F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{875AC4E0-73D6-4BF1-AD8F-DC4C19CED74F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{620BA628-34DD-423C-8982-39DE2B6B0122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{620BA628-34DD-423C-8982-39DE2B6B0122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{620BA628-34DD-423C-8982-39DE2B6B0122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{620BA628-34DD-423C-8982-39DE2B6B0122}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
