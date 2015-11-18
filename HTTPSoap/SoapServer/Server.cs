@@ -24,12 +24,14 @@ namespace SoapServer
         //Do server things here
         void ServerComm()
         {
+
             //Handle input from listener context
             var request = mContext.Request;
             var dataBody = request.InputStream;
             var inputStream = new StreamReader(dataBody);
 
             Console.WriteLine(inputStream.ReadToEnd());
+
 
             //Handle output from listener context
             var response = mContext.Response;
@@ -52,6 +54,16 @@ namespace SoapServer
     {
         static void Main(string[] args)
         {
+            byte[] data = {0, 1, 2, 2, 1, 0, 1, 2, 2, 1 };
+
+            DictionaryCompression dict_comp = new DictionaryCompression(data);
+
+            dict_comp.Compression();
+
+
+
+
+
             //Make the listener
             HttpListener server = new HttpListener();
             server.Prefixes.Add(@"http://*:8080/");
