@@ -15,16 +15,14 @@ namespace SoapServer
 
         public DictionaryCompression (byte[] data) { m_data = data; }
 
+
         public void Compression()
         {
-            /*
-            
-            
-            */
             bool first = true;
             byte[] p = null;
             byte c = 0;
             int array_position = 0;
+
 
             for (int i = 0; i < m_data.Length + 1; i++)
             {
@@ -145,6 +143,23 @@ namespace SoapServer
 
         public void Decompression()
         {
+            byte cw = 0;
+            byte pw = 0;
+            byte p = 0;
+            byte c = 0;
+
+            for (int i = 0; i < m_data.Length; i++)
+            {
+                //get the codeword
+                c = m_data[i];
+
+                //find the codeword in the dictionary
+                //output that char to the charstream
+                //pw = cw
+
+                
+
+            }
 
         }
     }
