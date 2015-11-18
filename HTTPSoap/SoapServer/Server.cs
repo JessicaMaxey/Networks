@@ -56,12 +56,13 @@ namespace SoapServer
         {
             byte[] data = {0, 1, 2, 2, 1, 0, 1, 2, 2, 1 };
 
+
             DictionaryCompression dict_comp = new DictionaryCompression(data);
 
             dict_comp.Compression();
 
 
-
+            dict_comp.Decompression();
 
 
             //Make the listener
