@@ -3,12 +3,14 @@ using System.Threading;
 using System.Net.Http;
 using System.Windows.Forms;
 using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SoapClient
 {
     public partial class ClientForm : Form
     {
-        ClientContext mClient;
+        ClientContext m_client;
         public ClientForm()
         {
             InitializeComponent();
@@ -21,36 +23,52 @@ namespace SoapClient
 
         private void SendButton_Click(object sender, EventArgs e)
         {
-            mClient = new ClientContext(@"http://localhost:8080/");
+            var reader = new BinaryReader(new FileStream(file_location_txtbx.Text, FileMode.Open));
+            byte[] fileData = new byte[reader.BaseStream.Length + 1];
+            reader.BaseStream.Read(fileData, 1, (int)reader.BaseStream.Length);
+            reader.Close();
+            fileData[0] = (byte)'c';
 
-            mClient.SendData(ClientText.Text);
+            m_client = new ClientContext(@"http://" + ip_address_txtbx.Text + ":" + port_txtbx.Text + "/");
+
+            m_client.SendData(fileData);
 
             //Bad. Do not use while loop to wait for response, handle this with a trigger somehow. Maybe a timer to ping in every so often.
             //Don't sit and spin in a GUI thread
-            while (mClient.DataAvailable == false)
+            while (m_client.data_available == false)
                 Thread.Sleep(50);
 
-            ClientText.Text = mClient.ReceiveData();
+            var new_data = m_client.ReceiveData();
+            FileStream new_file = new FileStream(file_location_txtbx.Text + ".comp", FileMode.OpenOrCreate);
+            new_file.SetLength(0);
+            new_file.Position = 0;
+            new_file.Write(new_data, 0, new_data.Length);
+            new_file.Close();
+        }
+
+        private void decompress_btn_Click(object sender, EventArgs e)
+        {
+
         }
     }
 
     //Class to handle the client communication stuff without worrying about threads and shit
     class ClientContext
     {
-        private HttpClient mContext;
-        private bool mThreadToken = false;
-        private byte[] mTxData;
+        private HttpClient m_context;
+        private bool m_thread_token = false;
+        private byte[] m_text_data;
 
-        public bool DataAvailable {get; private set;}
+        public bool data_available {get; private set;}
         
         public ClientContext(string uri)
         {
-            DataAvailable = false;
-            mContext = new HttpClient();
+            data_available = false;
+            m_context = new HttpClient();
 
-            mContext.BaseAddress = new Uri(uri);
-            mContext.Timeout = TimeSpan.FromSeconds(500); //Basically never timeout
-            mContext.MaxResponseContentBufferSize = 500000; //Never too much data
+            m_context.BaseAddress = new Uri(uri);
+            m_context.Timeout = TimeSpan.FromSeconds(500); //Basically never timeout
+            m_context.MaxResponseContentBufferSize = 500000; //Never too much data
 
             Thread clientRun = new Thread(ClientLoop);
             clientRun.Start();
@@ -61,49 +79,50 @@ namespace SoapClient
             while (true)
             {
                 //Sleep until the thread is awoken for tx
-                while (mThreadToken == false)
+                while (m_thread_token == false)
                     Thread.Sleep(50);
 
                 //Send the request
-                var responseTask = mContext.PostAsync("", new ByteArrayContent(mTxData));
+                var response_task = m_context.PostAsync("", new ByteArrayContent(m_text_data));
 
                 //Clear sleep token
-                mThreadToken = false;
+                m_thread_token = false;
 
-                responseTask.Wait();
-                var response = responseTask.Result;
+                response_task.Wait();
+                var response = response_task.Result;
 
                 //Get the request
-                var messageTask = response.Content.ReadAsStreamAsync();
-                messageTask.Wait();
-                MemoryStream message = messageTask.Result as MemoryStream;
+                var message_task = response.Content.ReadAsStreamAsync();
+                message_task.Wait();
+                BinaryReader message = new BinaryReader(message_task.Result);
 
-                mTxData = message.ToArray();
-                DataAvailable = true;
+                m_text_data = message.ReadBytes((int)message.BaseStream.Length);
+                string temp = Convert.ToString(m_text_data);
+                data_available = true;
 
                 //Sleep until the currently queued data is freed
-                while (DataAvailable == true)
+                while (data_available == true)
                     Thread.Sleep(50);
             }
         }
 
         public void SendData(byte[] data)
         {
-            while (DataAvailable == true) ;
+            while (data_available == true) ;
 
-            mTxData = data;
-            mThreadToken = true;
+            m_text_data = data;
+            m_thread_token = true;
 
 
-            while (mThreadToken == true) ; //Wait until the Client Loop notices and clears the transaction
+            while (m_thread_token == true) ; //Wait until the Client Loop notices and clears the transaction
         }
 
         public byte[] ReceiveData()
         {
-            if (DataAvailable == true)
+            if (data_available == true)
             {
-                DataAvailable = false;
-                return mTxData;
+                data_available = false;
+                return m_text_data;
             }
 
             //Data is not available

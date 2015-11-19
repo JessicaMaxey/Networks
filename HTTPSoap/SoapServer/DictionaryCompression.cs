@@ -15,17 +15,39 @@ namespace SoapServer
         int[] data2 = { 0, 2, 4, 4, 2, 1, 5, 2 };
         List<byte> decompressed_data = new List<byte>();
 
-        public DictionaryCompression (byte[] data) { m_data = data; }
+        public Dictionary<int, byte[]> Dictionary
+        {
+            get
+            {
+                return dict;
+            }
 
+            set
+            {
+                dict = value;
+            }
+        }
+
+        public List<int> CompressedData
+        {
+            get
+            {
+                return compressed_data;
+            }
+
+            set
+            {
+                compressed_data = value;
+            }
+        }
+
+        public DictionaryCompression (byte[] data) { m_data = data; }
 
         public void Compression()
         {
-            bool first = true;
             byte[] p = null;
             byte c = 0;
-            int array_position = 0;
-
-
+            
             for (int i = 0; i < m_data.Length + 1; i++)
             {
                 //combine
@@ -36,8 +58,6 @@ namespace SoapServer
 
                     if (p != null)
                     {
-
-
                         var new_entry = new byte[p.Length + 1];
                         Buffer.BlockCopy(p, 0, new_entry, 0, p.Length);
                         new_entry[p.Length] = c;
@@ -139,8 +159,6 @@ namespace SoapServer
                     compressed_data.Add(code_word);
                 }
             }
-
-
         }
 
         public void Decompression()
