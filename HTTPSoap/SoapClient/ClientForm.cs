@@ -44,6 +44,8 @@ namespace SoapClient
             new_file.Position = 0;
             new_file.Write(new_data, 0, new_data.Length);
             new_file.Close();
+
+            MessageBox.Show( "Compression Complete","", MessageBoxButtons.OK);
         }
 
         private void decompress_btn_Click(object sender, EventArgs e)
@@ -69,6 +71,8 @@ namespace SoapClient
             new_file.Position = 0;
             new_file.Write(new_data, 0, new_data.Length);
             new_file.Close();
+            MessageBox.Show( "Decompression Complete","", MessageBoxButtons.OK);
+
         }
     }
 
