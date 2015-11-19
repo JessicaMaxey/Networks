@@ -48,7 +48,27 @@ namespace SoapClient
 
         private void decompress_btn_Click(object sender, EventArgs e)
         {
+            var reader = new BinaryReader(new FileStream(file_location_txtbx.Text, FileMode.Open));
+            byte[] fileData = new byte[reader.BaseStream.Length + 1];
+            reader.BaseStream.Read(fileData, 1, (int)reader.BaseStream.Length);
+            reader.Close();
+            fileData[0] = (byte)'d';
 
+            m_client = new ClientContext(@"http://" + ip_address_txtbx.Text + ":" + port_txtbx.Text + "/");
+
+            m_client.SendData(fileData);
+
+            //Bad. Do not use while loop to wait for response, handle this with a trigger somehow. Maybe a timer to ping in every so often.
+            //Don't sit and spin in a GUI thread
+            while (m_client.data_available == false)
+                Thread.Sleep(50);
+
+            var new_data = m_client.ReceiveData();
+            FileStream new_file = new FileStream(file_location_txtbx.Text + ".decomp", FileMode.OpenOrCreate);
+            new_file.SetLength(0);
+            new_file.Position = 0;
+            new_file.Write(new_data, 0, new_data.Length);
+            new_file.Close();
         }
     }
 

@@ -10,10 +10,10 @@ namespace SoapServer
     {
 
         Dictionary<int, byte[]> dict = new Dictionary<int, byte[]>();
-        byte[] m_data = null;
+        byte[] m_datab = null;
+        List<int> m_datai = new List<int>();
         List<int> compressed_data = new List<int>();
-        int[] data2 = { 0, 2, 4, 4, 2, 1, 5, 2 };
-        List<byte> decompressed_data = new List<byte>();
+        List<byte[]> decompressed_data = new List<byte[]>();
 
         public Dictionary<int, byte[]> Dictionary
         {
@@ -41,20 +41,33 @@ namespace SoapServer
             }
         }
 
-        public DictionaryCompression (byte[] data) { m_data = data; }
+        public List<byte[]> DecompressedData
+        {
+            get
+            {
+                return decompressed_data;
+            }
+            set
+            {
+                decompressed_data = value;
+            }
+        }
+
+        public DictionaryCompression (byte[] data) { m_datab = data; }
+        public DictionaryCompression (List<int> data) { m_datai = data; }
 
         public void Compression()
         {
             byte[] p = null;
             byte c = 0;
             
-            for (int i = 0; i < m_data.Length + 1; i++)
+            for (int i = 0; i < m_datab.Length + 1; i++)
             {
                 //combine
-                if (i != m_data.Length)
+                if (i != m_datab.Length)
                 {
                     //read in char
-                    c = m_data[i];
+                    c = m_datab[i];
 
                     if (p != null)
                     {
@@ -111,14 +124,14 @@ namespace SoapServer
                             dict.Add(dict.Count(), new_entry);
 
                             //now set p = c
-                            p = new byte[c.ToString().Length];
+                            p = new byte[1];
                             p[0] = c;
                         }
                     }
                     else
                     {
                         //now set p = c
-                        p = new byte[c.ToString().Length];
+                        p = new byte[1];
                         p[0] = c;
 
                         //add p+c to dictionary
@@ -166,19 +179,16 @@ namespace SoapServer
             byte[] answer = { };
             int cw = 0;
 
-            for (int i = 0; i < data2.Length; i++)
+            for (int i = 0; i < m_datai.Count; i++)
             {
                 //get the codeword
-                cw = data2[i];
+                cw = (int)m_datai[i];
 
                 //find codeword in dictionary
                 answer = dict[cw];
 
                 //output that data to charstream
-                for (int j = 0; j < answer.Length; j++)
-                {
-                    decompressed_data.Add(answer[j]);
-                }
+                decompressed_data.Add(answer);
             }
 
         }

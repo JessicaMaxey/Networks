@@ -93,10 +93,11 @@ namespace SoapServer
             else
             {
                 BinaryFormatter formatter = new BinaryFormatter();
-                var binaryCompressedFile = inputStream.ReadBytes((int)inputStream.BaseStream.Length);
+                var binaryCompressedFile = inputStream.ReadBytes((int)request.ContentLength64);
 
                 Dictionary<int, byte[]> dictionary = new Dictionary<int, byte[]>();
                 List<int> data = new List<int>();
+
 
                 int count = 0;
                 int i;
@@ -104,16 +105,23 @@ namespace SoapServer
                 {
                     if (binaryCompressedFile[i] == 0xFF)
                         break;
-                    var sequence = new byte[binaryCompressedFile[i]];
-                    for (int x = 0; x < binaryCompressedFile[i]; i++, x++)
-                        sequence[x] = binaryCompressedFile[i];
+                    var run = binaryCompressedFile[i];
+                    var sequence = new byte[run];
+                    for (int x = 0; x < run; i++, x++)
+                        sequence[x] = binaryCompressedFile[i + 1];
                     dictionary.Add(count++, sequence);
                 }
 
+                i++;
                 for (; i < binaryCompressedFile.Length; i += 4)
                 {
                     data.Add(BitConverter.ToInt32(binaryCompressedFile, i));
                 }
+
+                DictionaryCompression dict_comp = new DictionaryCompression(data);
+                dict_comp.Dictionary = dictionary;
+
+                dict_comp.Decompression();
 
                 //Handle output from listener context
                 var response = mContext.Response;
@@ -122,10 +130,12 @@ namespace SoapServer
 
                 IFormatter temp = new BinaryFormatter();
 
-                Stream compressed_file = new MemoryStream();
+                Stream decompressed_file = new MemoryStream();
 
-                //compressed_file now goes into returning XML document
-                responseWrite.Write(compressed_file);
+                for (int x = 0; x < dict_comp.DecompressedData.Count; x++)
+                {
+                    responseStream.Write(dict_comp.DecompressedData[x], 0, dict_comp.DecompressedData[x].Length);
+                }
 
                 //End everything we put into it
                 responseWrite.Close();
