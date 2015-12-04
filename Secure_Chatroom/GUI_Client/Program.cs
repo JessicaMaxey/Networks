@@ -8,7 +8,6 @@ using System.IO;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text;
-using Encryption;
 
 namespace GUI_Client
 {

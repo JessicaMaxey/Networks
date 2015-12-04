@@ -69,15 +69,45 @@ public class EchoServer
             //displays the message in the chat room
             while (input != "exit")
             {
-                Console.WriteLine(screenname + ": " + input );
+                
 
-                //sends message out to everyone
-                SendMessage(screenname, input);
-                //sends the same massage back to client into their chatbox
-                //to see what they just wrote
-                EchoMessage(screenname, input);
+                if (input.Contains("_finduser_") == true)
+                {
+                    bool found = false;
+                    //remove keyword from input
+                    input = input.Remove(0, 10);
 
-                input = sreader.ReadLine();
+                    //search list to see if user name is in the list of clients already connected
+                    lock (lockthis)
+                    {
+                        for (int i = 0; i < namelist.Count; i++)
+                        {
+                            if (namelist[i] == input)
+                            {
+                                //if true, send messagebox to that user asking if they want to
+                                //start a chat with the requesting user
+                                SendPrivateBox();
+                                found = true;
+                            }
+                        }
+                        //if false, the user is not found, then send message back to client 
+                        //indicating that there is no such user
+
+                    }
+                    input = "";
+                }
+                else if (input != "")
+                {
+                    Console.WriteLine(screenname + ": " + input);
+
+                    //sends message out to everyone
+                    SendMessage(screenname, input);
+                    //sends the same massage back to client into their chatbox
+                    //to see what they just wrote
+                    EchoMessage(screenname, input);
+
+                    input = sreader.ReadLine();
+                }
             }
 
             //gets rid of the clients screenname when they leave the room
@@ -144,6 +174,13 @@ public class EchoServer
             }
         }
     }
+
+    public void SendPrivateBox ()
+    {
+
+    }
+    
+
 
     public void EchoMessage (string screenname, string input)
     {

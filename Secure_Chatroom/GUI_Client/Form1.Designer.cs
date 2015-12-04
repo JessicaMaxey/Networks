@@ -36,7 +36,7 @@
             this.screenname_txtbx = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.private_chat_btn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // main_txtbx
@@ -112,14 +112,15 @@
             this.label2.TabIndex = 7;
             this.label2.Text = "Screen Name";
             // 
-            // button1
+            // private_chat_btn
             // 
-            this.button1.Location = new System.Drawing.Point(398, 21);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(126, 23);
-            this.button1.TabIndex = 8;
-            this.button1.Text = "Private Chat";
-            this.button1.UseVisualStyleBackColor = true;
+            this.private_chat_btn.Location = new System.Drawing.Point(398, 23);
+            this.private_chat_btn.Name = "private_chat_btn";
+            this.private_chat_btn.Size = new System.Drawing.Size(126, 21);
+            this.private_chat_btn.TabIndex = 8;
+            this.private_chat_btn.Text = "Private Chat";
+            this.private_chat_btn.UseVisualStyleBackColor = true;
+            this.private_chat_btn.Click += new System.EventHandler(this.private_chat_btn_Click);
             // 
             // Form1
             // 
@@ -128,7 +129,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Maroon;
             this.ClientSize = new System.Drawing.Size(718, 454);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.private_chat_btn);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.screenname_txtbx);
@@ -154,7 +155,7 @@
         private System.Windows.Forms.TextBox screenname_txtbx;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button private_chat_btn;
     }
 }
 

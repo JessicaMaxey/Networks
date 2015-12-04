@@ -11,6 +11,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.InteropServices;
+using Microsoft.VisualBasic;
 
 
 namespace GUI_Client
@@ -33,6 +34,10 @@ namespace GUI_Client
             //doesn't let the user send message until the connection is made
             send_btn.ForeColor = Color.LightGray;
             send_btn.Enabled = false;
+
+            private_chat_btn.ForeColor = Color.LightGray;
+            private_chat_btn.Enabled = false;
+
 
 
             client = new TcpClient();
@@ -73,6 +78,9 @@ namespace GUI_Client
                         connect_btn.Enabled = false;
                         connect_btn.ForeColor = Color.LightGray;
                         screenname_txtbx.Enabled = false;
+                        private_chat_btn.ForeColor = Color.Black;
+                        private_chat_btn.Enabled = true;
+
 
 
                         //gets stream between server and client
@@ -132,6 +140,13 @@ namespace GUI_Client
             //if client has been closed, the reading will end
             while (endthread == false)
             {
+                //this is where need to look for the returning message saying
+                //that the user you want to start a private chat with is not
+                //there
+
+
+
+
                 String returndata = sreader.ReadLine();
                 returndata += "\n";
                 //using this method makes writing to the 
@@ -197,6 +212,21 @@ namespace GUI_Client
         private void Form1_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void private_chat_btn_Click(object sender, EventArgs e)
+        {
+            string input = "_finduser_";
+
+            //Get the name of the other user this user wants to start a private chat with
+            input += Interaction.InputBox("Please enter the name of the user you would like to start a private chat with: ", "Private Chatroom", "");
+
+            
+            //Send that name to the server to check and see if they exist
+            //sends the message to the sever to be sent to 
+            //other clients
+            swriter.WriteLine(input);
+            swriter.Flush();
         }
     }
 }
