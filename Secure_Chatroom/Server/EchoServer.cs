@@ -70,7 +70,6 @@ public class EchoServer
             while (input != "exit")
             {
 
-
                 if (input.Contains("_finduser_") == true)
                 {
                     bool found = false;

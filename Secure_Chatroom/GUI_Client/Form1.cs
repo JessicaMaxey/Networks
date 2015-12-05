@@ -18,14 +18,8 @@ namespace GUI_Client
 {
     public partial class Form1 : Form
     {
-        static StreamWriter swriter = null;
-        static StreamReader sreader = null;
-        TcpClient client;
-        int port = 7;
         bool exitwithoutconnecting = true;
         bool endthread = false;
-        Thread readthread;
-
 
         public Form1(String[] args)
         {
@@ -38,11 +32,11 @@ namespace GUI_Client
             private_chat_btn.ForeColor = Color.LightGray;
             private_chat_btn.Enabled = false;
 
-
-
-            client = new TcpClient();
+            NetworkController.AddListener("", SetText);
+            NetworkController.AddListener("_mainchat_", SetText);
+            NetworkController.AddListener("_privatechatpopup_", ShowPrivateChatPopUp);
+            
             string text;
-
 
             //Greets the user with some instructions
             text = ("Hello! First, please type in the host IP into the box above. \r\n");
@@ -67,10 +61,11 @@ namespace GUI_Client
                     {
                         //Host name comes from command line
                         //If no host specified, local machine is host
-                        String host = server_address_txtbx.Text;
-                        client.Connect(host, port);
-                        exitwithoutconnecting = false;
+                        string host = server_address_txtbx.Text;
 
+                        NetworkController.Initialize(host);
+                        NetworkController.SendMessage(screenname_txtbx.Text);
+                       
                         //lets you use the send button now that the connect has been made
                         send_btn.Enabled = true;
                         send_btn.ForeColor = Color.Black;
@@ -80,25 +75,6 @@ namespace GUI_Client
                         screenname_txtbx.Enabled = false;
                         private_chat_btn.ForeColor = Color.Black;
                         private_chat_btn.Enabled = true;
-
-
-
-                        //gets stream between server and client
-                        NetworkStream networkstream = client.GetStream();
-
-                        //creates writer and reader
-                        swriter = new StreamWriter(networkstream);
-                        sreader = new StreamReader(networkstream);
-
-                        //starts thread to read messages being sent from other clients
-                        //from the server
-                        readthread = new Thread(new ThreadStart(Reader));
-                        readthread.Start();
-
-
-                        //sends the screen name to the server as the first message
-                        swriter.WriteLine(screenname_txtbx.Text);
-                        swriter.Flush();
                     }
                     catch (Exception s)
                     {
@@ -114,25 +90,18 @@ namespace GUI_Client
             //gets the message to be sent from the user
             String input = message_txtbx.Text;
 
-            //clears the message box
-            message_txtbx.Clear();
-
-            //sends the message to the sever to be sent to 
-            //other clients
-            swriter.WriteLine(input);
-            swriter.Flush();
+            NetworkController.SendMessage(input);
 
             if (input == "exit")
             {
                 endthread = true;
 
-                //cleans up the threads
-                readthread.Abort();
                 this.Close();
             }
                  
         }
 
+        /*
         private void Reader()
         {
 
@@ -182,11 +151,44 @@ namespace GUI_Client
             }
 
         }
+        */
 
-        delegate void SetTextCallback(string text);
+        delegate bool PrivateChatPopUpCallBack(string text);
+        //Thread safe pop up window for private chat
+        private bool ShowPrivateChatPopUp(string text)
+        {
+            if (this.InvokeRequired)
+            {
+                PrivateChatPopUpCallBack d = new PrivateChatPopUpCallBack(ShowPrivateChatPopUp);
+                this.Invoke(d, new object[] { text });
+            }
+            else
+            {
+                DialogResult dialogresult = MessageBox.Show("User " + text + " is requesting a private chatroom with you.", "Private Chatroom request", MessageBoxButtons.YesNo);
 
+                if (dialogresult == DialogResult.Yes)
+                {
+                    string input = "Private Chatroom was accepted.";
+                    NetworkController.SendMessage(input);
+
+                    //do something here to make another window pop up
+                    MakeSecureChatroomWindow();
+
+                }
+                else if (dialogresult == DialogResult.No)
+                {
+                    string input = "Private Chatroom was declined.";
+
+                    NetworkController.SendMessage(input);
+                }
+            }
+
+            return false;
+        }
+
+        delegate bool SetTextCallback(string text);
         //this makes writing to the textbox thread safe
-        private void SetText (string text)
+        private bool SetText (string text)
         {
             if (this.main_txtbx.InvokeRequired)
             {
@@ -197,6 +199,8 @@ namespace GUI_Client
             {
                 this.main_txtbx.Text += (text + "\r\n");
             }
+
+            return false;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -212,26 +216,7 @@ namespace GUI_Client
                     e.Cancel = true;
                     break;
                 default:
-                    {
-                        if (exitwithoutconnecting != true)
-                        {
-                            //sends the exit message to the server
-                            String input = "exit";
-                            swriter.WriteLine(input);
-                            swriter.Flush();
-                            endthread = true;
-
-                            //cleans up the threads
-                            readthread.Abort();
-
-                            swriter.Close();
-                            sreader.Close();
-                            //exits
-                            break;
-                        }
-                        break;
-                    }
-
+                    break;
             }
 
         }
@@ -243,7 +228,7 @@ namespace GUI_Client
 
         private void MakeSecureChatroomWindow ()
         {
-
+            
         }
 
         private void private_chat_btn_Click(object sender, EventArgs e)
@@ -253,12 +238,11 @@ namespace GUI_Client
             //Get the name of the other user this user wants to start a private chat with
             input += Interaction.InputBox("Please enter the name of the user you would like to start a private chat with: ", "Private Chatroom", "");
 
-            
+
             //Send that name to the server to check and see if they exist
             //sends the message to the sever to be sent to 
             //other clients
-            swriter.WriteLine(input);
-            swriter.Flush();
+            NetworkController.SendMessage(input);
         }
     }
 }
