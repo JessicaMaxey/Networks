@@ -70,11 +70,10 @@ public class EchoServer
             while (input != "exit")
             {
 
-                if (input.Contains("_finduser_") == true)
+                if (input.Contains("_createmessageroom_") == true)
                 {
-                    bool found = false;
                     //remove keyword from input
-                    input = input.Remove(0, 10);
+                    input = input.Remove(0, 19);
 
                     //search list to see if user name is in the list of clients already connected
                     lock (lockthis)
@@ -86,13 +85,23 @@ public class EchoServer
                                 //if true, send messagebox to that user asking if they want to
                                 //start a chat with the requesting user
                                 SendPrivateBox(input);
-                                found = true;
+                                break;
                             }
                         }
                         //if false, the user is not found, then send message back to client 
                         //indicating that there is no such user
 
                     }
+                }
+                else if (input.Contains("_pm"))
+                {
+                    input = input.Remove(0, 3);
+                    int end = input.IndexOf('_');
+                    string name = input.Substring(0, end);
+
+                    input = input.Remove(0, end + 1);
+
+                    SendPrivateMessage(name, input);
                 }
                 else
                 {
@@ -151,10 +160,10 @@ public class EchoServer
         }
     }
 
-    public void Message(string screenname, string input)
+    public void Message(string input)
     {
         //displays the message in the other chat rooms
-        swriter.WriteLine(screenname + ": " + input);
+        swriter.WriteLine(input);
         swriter.Flush();
     }
 
@@ -168,7 +177,7 @@ public class EchoServer
             {
                 if (esnamelist[i].Item1 != this)
                 {
-                    esnamelist[i].Item1.Message(screenname, input);
+                    esnamelist[i].Item1.Message(screenname + ": " + input);
                 }
             }
         }
@@ -194,13 +203,26 @@ public class EchoServer
             {
                 if (esnamelist[i].Item2 == screenname)
                 {
-                    esnamelist[i].Item1.Message(screenname, "_privatechatpopup_" + current_client_name);
+                    esnamelist[i].Item1.Message("_privatechatpopup_" + current_client_name);
                 }
             }
         }
     }
-    
 
+    public void SendPrivateMessage(string screenname, string message)
+    {
+        lock (lockthis)
+        {
+            //send the messagebox to the user who is being requested
+            for (int i = 0; i < esnamelist.Count; i++)
+            {
+                if (esnamelist[i].Item2 == screenname)
+                {
+                    esnamelist[i].Item1.Message(message);
+                }
+            }
+        }
+    }
 
     public void EchoMessage (string screenname, string input)
     {
@@ -211,7 +233,7 @@ public class EchoServer
             {
                 if (esnamelist[i].Item1 == this)
                 {
-                esnamelist[i].Item1.Message(screenname, input);
+                esnamelist[i].Item1.Message(screenname + ": " + input);
                 }
             }
         }

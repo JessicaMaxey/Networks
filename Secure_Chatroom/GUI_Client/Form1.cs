@@ -20,6 +20,7 @@ namespace GUI_Client
     {
         bool exitwithoutconnecting = true;
         bool endthread = false;
+        string username;
 
         public Form1(String[] args)
         {
@@ -65,7 +66,8 @@ namespace GUI_Client
 
                         NetworkController.Initialize(host);
                         NetworkController.SendMessage(screenname_txtbx.Text);
-                       
+                        username = screenname_txtbx.Text;
+
                         //lets you use the send button now that the connect has been made
                         send_btn.Enabled = true;
                         send_btn.ForeColor = Color.Black;
@@ -169,17 +171,15 @@ namespace GUI_Client
                 if (dialogresult == DialogResult.Yes)
                 {
                     string input = "Private Chatroom was accepted.";
-                    NetworkController.SendMessage(input);
+                    NetworkController.SendMessage("_pm" + text + "_" + "_pm" + text + username + "_" + input);
 
                     //do something here to make another window pop up
-                    MakeSecureChatroomWindow();
-
+                    MakeSecureChatroomWindow(text);
                 }
                 else if (dialogresult == DialogResult.No)
                 {
                     string input = "Private Chatroom was declined.";
-
-                    NetworkController.SendMessage(input);
+                    NetworkController.SendMessage("_pm" + text + "_" + "_pm" + text + username + "_" + input);
                 }
             }
 
@@ -226,23 +226,29 @@ namespace GUI_Client
 
         }
 
-        private void MakeSecureChatroomWindow ()
+        private void MakeSecureChatroomWindow (string other)
         {
-            
+            string receiver = "_pm" + other + "_";
+            string id = "_pm" + other + username + "_";
+            new PrivateChatBox(username, "Private Chat: " + username + " & " + other, receiver, id);
         }
 
         private void private_chat_btn_Click(object sender, EventArgs e)
         {
-            string input = "_finduser_";
-
+            string input = "_createmessageroom_";
+            string name = Interaction.InputBox("Please enter the name of the user you would like to start a private chat with: ", "Private Chatroom", "");
             //Get the name of the other user this user wants to start a private chat with
-            input += Interaction.InputBox("Please enter the name of the user you would like to start a private chat with: ", "Private Chatroom", "");
+            input += name;
 
 
             //Send that name to the server to check and see if they exist
             //sends the message to the sever to be sent to 
             //other clients
             NetworkController.SendMessage(input);
+
+            string receiver = "_pm" + name + "_";
+            string id = "_pm" + username + name + "_";
+            new PrivateChatBox(username, "Private Chat: " + username + " & " + name, receiver, id);
         }
     }
 }

@@ -86,11 +86,14 @@ public static class NetworkController
                 key = returndata.Substring(first_tag, tag_end - first_tag);
             }
 
-            var d = listeners[key];
-            
-            d(returndata.Substring(tag_end));
+            if (listeners.ContainsKey(key))
+            {
+                var d = listeners[key];
+                d(returndata.Substring(tag_end));
+            }
         }
     }
+
     private static void Sender ()
     {
         while (true)
