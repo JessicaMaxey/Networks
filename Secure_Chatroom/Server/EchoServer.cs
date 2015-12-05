@@ -69,7 +69,7 @@ public class EchoServer
             //displays the message in the chat room
             while (input != "exit")
             {
-                
+
 
                 if (input.Contains("_finduser_") == true)
                 {
@@ -86,7 +86,7 @@ public class EchoServer
                             {
                                 //if true, send messagebox to that user asking if they want to
                                 //start a chat with the requesting user
-                                SendPrivateBox();
+                                SendPrivateBox(input);
                                 found = true;
                             }
                         }
@@ -94,9 +94,8 @@ public class EchoServer
                         //indicating that there is no such user
 
                     }
-                    input = "";
                 }
-                else if (input != "")
+                else
                 {
                     Console.WriteLine(screenname + ": " + input);
 
@@ -105,9 +104,10 @@ public class EchoServer
                     //sends the same massage back to client into their chatbox
                     //to see what they just wrote
                     EchoMessage(screenname, input);
-
-                    input = sreader.ReadLine();
                 }
+
+                input = sreader.ReadLine();
+
             }
 
             //gets rid of the clients screenname when they leave the room
@@ -175,9 +175,30 @@ public class EchoServer
         }
     }
 
-    public void SendPrivateBox ()
+    public void SendPrivateBox (string screenname)
     {
+        string current_client_name = "";
 
+        lock (lockthis)
+        {
+            //find the name of the user that is requesting the private chatroom
+            for (int i = 0; i < esnamelist.Count; i++)
+            {
+                if (esnamelist[i].Item1 == this)
+                {
+                    current_client_name = esnamelist[i].Item2;
+                }
+            }
+
+            //send the messagebox to the user who is being requested
+            for (int i = 0; i < esnamelist.Count; i++)
+            {
+                if (esnamelist[i].Item2 == screenname)
+                {
+                    esnamelist[i].Item1.Message(screenname, "_privatechatpopup_" + current_client_name);
+                }
+            }
+        }
     }
     
 

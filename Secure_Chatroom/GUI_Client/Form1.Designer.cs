@@ -55,6 +55,7 @@
             this.server_address_txtbx.Name = "server_address_txtbx";
             this.server_address_txtbx.Size = new System.Drawing.Size(128, 20);
             this.server_address_txtbx.TabIndex = 1;
+            this.server_address_txtbx.Text = "127.0.0.1";
             // 
             // message_txtbx
             // 

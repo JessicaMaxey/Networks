@@ -140,18 +140,45 @@ namespace GUI_Client
             //if client has been closed, the reading will end
             while (endthread == false)
             {
+                String returndata = sreader.ReadLine();
+
                 //this is where need to look for the returning message saying
                 //that the user you want to start a private chat with is not
                 //there
 
+                if (returndata.Contains("_privatechatpopup_"))
+                {
+                    //removes flag text, and leaves just the screen name of the 
+                    //user who is requesting the private chatroom
+                    returndata = returndata.Remove(0, 24);
 
+                    DialogResult dialogresult = MessageBox.Show("User " + returndata + " is requesting a private chatroom with you.", "Private Chatroom request", MessageBoxButtons.YesNo);
 
+                    if (dialogresult == DialogResult.Yes)
+                    {
+                        string input = "Private Chatroom was accepted.";
+                        swriter.WriteLine(input);
+                        swriter.Flush();
 
-                String returndata = sreader.ReadLine();
-                returndata += "\n";
-                //using this method makes writing to the 
-                //message box thread safe
-                this.SetText(returndata);
+                        //do something here to make another window pop up
+                        MakeSecureChatroomWindow();
+
+                    }
+                    else if (dialogresult == DialogResult.No)
+                    {
+                        string input = "Private Chatroom was declined.";
+                        swriter.WriteLine(input);
+                        swriter.Flush();
+                    }
+
+                }
+                else
+                {
+                    returndata += "\n";
+                    //using this method makes writing to the 
+                    //message box thread safe
+                    this.SetText(returndata);
+                }
             }
 
         }
@@ -210,6 +237,11 @@ namespace GUI_Client
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void MakeSecureChatroomWindow ()
         {
 
         }
