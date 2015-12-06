@@ -175,11 +175,13 @@ namespace GUI_Client
 
                     //do something here to make another window pop up
                     MakeSecureChatroomWindow(text);
+
+                    NetworkController.SendMessage("_pm" + username + "_" + "_pm" + text + username + "_" + input);
                 }
                 else if (dialogresult == DialogResult.No)
                 {
                     string input = "Private Chatroom was declined.";
-                    NetworkController.SendMessage("_pm" + text + "_" + "_pm" + text + username + "_" + input);
+                    NetworkController.SendMessage("_pm" + username + "_" + "_pm" + text + username + "_exit");
                 }
             }
 

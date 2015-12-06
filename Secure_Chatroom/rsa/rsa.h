@@ -19,8 +19,8 @@ namespace Encryption {
 	public ref class rsa
 	{
 	public:
-		ull Decrypt(Keys ^ key, ull cipher_val);
-		ull Encrypt(Keys ^ key, ull val_to_convert);
+		static ull Decrypt(Keys ^ key, ull cipher_val);
+		static ull Encrypt(Keys ^ key, ull val_to_convert);
 	};
 
 	public ref class diffie_hellman

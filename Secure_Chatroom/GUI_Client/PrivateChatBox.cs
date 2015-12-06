@@ -17,6 +17,7 @@ namespace GUI_Client
         string identifier;
         string sendIdentifier;
         string myscreenname;
+        bool first_time = true;
 
         Encryption.Keys myKeys = Encryption.diffie_hellman.KeyGen(Encryption.diffie_hellman.GeneratePrime(100, 1000), Encryption.diffie_hellman.GeneratePrime(100, 1000));
         Encryption.Keys theirKeys = null;
@@ -32,7 +33,27 @@ namespace GUI_Client
             }
             else
             {
-                this.main_txtbx.Text += (text + "\r\n");
+                if (first_time != true)
+                {
+                    var message_to_decrypt = text.Split(' ');
+                    string message_to_textbox = "";
+
+                    for (int i = 0; i < message_to_decrypt.Length; i++)
+                    {
+                        message_to_textbox += (char)Encryption.rsa.Decrypt(myKeys, UInt64.Parse(message_to_decrypt[i]));
+                    }
+
+                    this.main_txtbx.Text += (message_to_textbox + "\r\n");
+
+                }
+                else
+                {
+                    first_time = false;
+                    this.main_txtbx.Text += (text + "\r\n");
+
+
+                }
+
             }
 
             return false;
@@ -43,7 +64,7 @@ namespace GUI_Client
         {
             if (this.InvokeRequired)
             {
-                SetKeyCallback d = new SetKeyCallback(SetText);
+                SetKeyCallback d = new SetKeyCallback(SetKey);
                 this.Invoke(d, new object[] { key });
             }
             else
@@ -53,6 +74,8 @@ namespace GUI_Client
                 theirKeys.public_key_e = UInt64.Parse(keys[0]);
                 theirKeys.public_key_n = UInt64.Parse(keys[1]);
             }
+
+            NetworkController.RemoveListener("_pmkeys_");
 
             return false;
         }
@@ -85,12 +108,20 @@ namespace GUI_Client
             string name = myscreenname + ": ";
             string message = message_txtbx.Text;
 
+            string message_to_array = name + message;
+            var message_to_encrypt = message_to_array.ToCharArray();
+            string message_to_send = "";
 
-
+            for (int i = 0; i < message_to_encrypt.Length; i++)
+            {
+                if (message_to_send.Length != 0)
+                    message_to_send += " ";
+                message_to_send += Encryption.rsa.Encrypt(theirKeys, message_to_encrypt[i]);
+            }
 
             main_txtbx.Text += name + message + "\r\n";
 
-            NetworkController.SendMessage(sendIdentifier + identifier + name + message);
+            NetworkController.SendMessage(sendIdentifier + identifier + message_to_send);
 
             if (message == "exit")
             {
@@ -100,5 +131,50 @@ namespace GUI_Client
 
             message_txtbx.Clear();
         }
+
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+
+            base.OnFormClosing(e);
+
+            if (e.CloseReason == CloseReason.WindowsShutDown) return;
+
+            // Confirm user wants to close
+            switch (MessageBox.Show(this, "Are you sure you want to close?", "Closing", MessageBoxButtons.YesNo))
+            {
+                case DialogResult.No:
+                    e.Cancel = true;
+                    break;
+                default:
+                    {
+
+                        string name = myscreenname + ": ";
+                        string message = myscreenname + " has left the chat";
+
+                        string message_to_array = name + message;
+                        var message_to_encrypt = message_to_array.ToCharArray();
+                        string message_to_send = "";
+
+                        for (int i = 0; i < message_to_encrypt.Length; i++)
+                        {
+                            if (message_to_send.Length != 0)
+                                message_to_send += " ";
+                            message_to_send += Encryption.rsa.Encrypt(theirKeys, message_to_encrypt[i]);
+                        }
+
+                        main_txtbx.Text += name + message + "\r\n";
+
+                        NetworkController.SendMessage(sendIdentifier + identifier + message_to_send);
+
+                        NetworkController.RemoveListener("_pmkeys_");
+                        NetworkController.RemoveListener(identifier);
+                        break;
+                    }
+            }
+
+        }
     }
+
+
 }

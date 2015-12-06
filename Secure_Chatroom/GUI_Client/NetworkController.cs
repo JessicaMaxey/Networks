@@ -74,22 +74,29 @@ public static class NetworkController
     {
         while(true)
         {
-            string returndata = sreader.ReadLine();
-            int tag_end = 0;
-
-            string key = "";
-            if (returndata.Contains("_"))
+            try
             {
-                int first_tag = returndata.IndexOf('_');
-                tag_end = returndata.IndexOf('_', first_tag + 1) + 1;
+                string returndata = sreader.ReadLine();
+                int tag_end = 0;
 
-                key = returndata.Substring(first_tag, tag_end - first_tag);
+                string key = "";
+                if (returndata.Contains("_"))
+                {
+                    int first_tag = returndata.IndexOf('_');
+                    tag_end = returndata.IndexOf('_', first_tag + 1) + 1;
+
+                    key = returndata.Substring(first_tag, tag_end - first_tag);
+                }
+
+                if (listeners.ContainsKey(key))
+                {
+                    var d = listeners[key];
+                    d(returndata.Substring(tag_end));
+                }
             }
-
-            if (listeners.ContainsKey(key))
+            catch
             {
-                var d = listeners[key];
-                d(returndata.Substring(tag_end));
+
             }
         }
     }
