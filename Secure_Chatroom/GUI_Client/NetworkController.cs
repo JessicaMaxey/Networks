@@ -57,7 +57,14 @@ public static class NetworkController
 
     public static void AddListener(string token, Func<string, bool> d)
     {
-        listeners.Add(token, d);
+        try
+        {
+            listeners.Add(token, d);
+        }
+        catch(Exception e)
+        {
+            MessageBox.Show(e.Message, "Can not start another private chat with someone you're already in chat with!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     public static void RemoveListener(string token)

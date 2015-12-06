@@ -12,7 +12,7 @@ using Encryption;
 namespace GUI_Client
 {
     public partial class PrivateChatBox : Form
-    {
+    { 
         string roomname;
         string identifier;
         string sendIdentifier;
@@ -26,37 +26,47 @@ namespace GUI_Client
         //this makes writing to the textbox thread safe
         private bool SetText(string text)
         {
-            if (this.main_txtbx.InvokeRequired)
+        
+            try
             {
-                SetTextCallback d = new SetTextCallback(SetText);
-                this.Invoke(d, new object[] { text });
-            }
-            else
-            {
-                if (first_time != true)
+                if (this.main_txtbx.InvokeRequired)
                 {
-                    var message_to_decrypt = text.Split(' ');
-                    string message_to_textbox = "";
-
-                    for (int i = 0; i < message_to_decrypt.Length; i++)
-                    {
-                        message_to_textbox += (char)Encryption.rsa.Decrypt(myKeys, UInt64.Parse(message_to_decrypt[i]));
-                    }
-
-                    this.main_txtbx.Text += (message_to_textbox + "\r\n");
-
+                    SetTextCallback d = new SetTextCallback(SetText);
+                    this.Invoke(d, new object[] { text });
                 }
                 else
                 {
-                    first_time = false;
-                    this.main_txtbx.Text += (text + "\r\n");
+                    if (first_time != true)
+                    {
+                        var message_to_decrypt = text.Split(' ');
+                        string message_to_textbox = "";
 
+                        for (int i = 0; i < message_to_decrypt.Length; i++)
+                        {
+                            message_to_textbox += (char)Encryption.rsa.Decrypt(myKeys, UInt64.Parse(message_to_decrypt[i]));
+                        }
+
+                        this.main_txtbx.Text += (message_to_textbox + "\r\n");
+
+                    }
+                    else
+                    {
+                        first_time = false;
+                        this.main_txtbx.Text += (text + "\r\n");
+
+
+                    }
 
                 }
 
             }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Can not start a chatroom with yourself.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             return false;
+
         }
 
         delegate bool SetKeyCallback(string key);
@@ -149,27 +159,36 @@ namespace GUI_Client
                 default:
                     {
 
-                        string name = myscreenname + ": ";
-                        string message = myscreenname + " has left the chat";
-
-                        string message_to_array = name + message;
-                        var message_to_encrypt = message_to_array.ToCharArray();
-                        string message_to_send = "";
-
-                        for (int i = 0; i < message_to_encrypt.Length; i++)
+                        try
                         {
-                            if (message_to_send.Length != 0)
-                                message_to_send += " ";
-                            message_to_send += Encryption.rsa.Encrypt(theirKeys, message_to_encrypt[i]);
+                            string name = myscreenname + ": ";
+                            string message = myscreenname + " has left the chat";
+
+                            string message_to_array = name + message;
+                            var message_to_encrypt = message_to_array.ToCharArray();
+                            string message_to_send = "";
+
+                            for (int i = 0; i < message_to_encrypt.Length; i++)
+                            {
+                                if (message_to_send.Length != 0)
+                                    message_to_send += " ";
+                                message_to_send += Encryption.rsa.Encrypt(theirKeys, message_to_encrypt[i]);
+                            }
+
+                            main_txtbx.Text += name + message + "\r\n";
+
+                            NetworkController.SendMessage(sendIdentifier + identifier + message_to_send);
+
+                            NetworkController.RemoveListener("_pmkeys_");
+                            NetworkController.RemoveListener(identifier);
+                            break;
                         }
-
-                        main_txtbx.Text += name + message + "\r\n";
-
-                        NetworkController.SendMessage(sendIdentifier + identifier + message_to_send);
-
-                        NetworkController.RemoveListener("_pmkeys_");
-                        NetworkController.RemoveListener(identifier);
-                        break;
+                        catch (Exception f)
+                        {
+                            NetworkController.RemoveListener("_pmkeys_");
+                            NetworkController.RemoveListener(identifier);
+                            break;
+                        }
                     }
             }
 
