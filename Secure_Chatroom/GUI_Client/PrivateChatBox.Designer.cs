@@ -51,6 +51,7 @@
             this.message_txtbx.Name = "message_txtbx";
             this.message_txtbx.Size = new System.Drawing.Size(613, 49);
             this.message_txtbx.TabIndex = 6;
+            this.message_txtbx.TextChanged += new System.EventHandler(this.message_txtbx_TextChanged);
             // 
             // main_txtbx
             // 
@@ -64,8 +65,10 @@
             // 
             // PrivateChatBox
             // 
+            this.AcceptButton = this.send_btn;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.ClientSize = new System.Drawing.Size(719, 413);
             this.Controls.Add(this.send_btn);
             this.Controls.Add(this.message_txtbx);

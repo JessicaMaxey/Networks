@@ -69,6 +69,7 @@ public class EchoServer
             //displays the message in the chat room
             while (input != "exit")
             {
+                bool userfound = false;
 
                 if (input.Contains("_createmessageroom_") == true)
                 {
@@ -82,15 +83,32 @@ public class EchoServer
                         {
                             if (namelist[i] == input)
                             {
-                                //if true, send messagebox to that user asking if they want to
-                                //start a chat with the requesting user
-                                SendPrivateBox(input);
-                                break;
-                            }
-                        }
-                        //if false, the user is not found, then send message back to client 
-                        //indicating that there is no such user
+                                if (namelist[i] == screenname)
+                                {
+                                    EchoMessage(screenname, "Cannot start a private chat with yourself.");
+                                }
+                                else
+                                {
+                                    userfound = true;
 
+                                    //if true, send messagebox to that user asking if they want to
+                                    //start a chat with the requesting user
+                                    SendPrivateBox(input);
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                //if false, the user is not found, then send message back to client 
+                                //indicating that there is no such user
+
+                            }
+
+                        }
+                        if (userfound == false)
+                        {
+                            EchoMessage(screenname, "_usernotfound_");
+                        }
                     }
                 }
                 else if (input.Contains("_pm"))
@@ -233,7 +251,15 @@ public class EchoServer
             {
                 if (esnamelist[i].Item1 == this)
                 {
-                esnamelist[i].Item1.Message(screenname + ": " + input);
+                    if (input.Contains("_usernotfound_"))
+                    {
+                        Thread.Sleep(2000);
+                        esnamelist[i].Item1.Message(input);
+                    }
+                    else
+                    {
+                        esnamelist[i].Item1.Message(screenname + ": " + input);
+                    }
                 }
             }
         }

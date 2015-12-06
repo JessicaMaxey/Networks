@@ -53,7 +53,7 @@ namespace GUI_Client
                     {
                         first_time = false;
                         this.main_txtbx.Text += (text + "\r\n");
-
+                        NetworkController.RemoveListener("_usernotfound_");
 
                     }
 
@@ -101,6 +101,7 @@ namespace GUI_Client
 
             NetworkController.AddListener(identifier, SetText);
             NetworkController.AddListener("_pmkeys_", SetKey);
+            NetworkController.AddListener("_usernotfound_", UserNotFound);
 
             NetworkController.SendMessage(sendIdentifier + "_pmkeys_" + myKeys.public_key_e + " " + myKeys.public_key_n);            
 
@@ -111,6 +112,25 @@ namespace GUI_Client
         private void PrivateChatBox_Load(object sender, EventArgs e)
         {
 
+        }
+
+        delegate bool UserNotFoundCallback(string text);
+
+        private bool UserNotFound (string username)
+        {
+            if (this.InvokeRequired)
+            {
+                UserNotFoundCallback d = new UserNotFoundCallback(UserNotFound);
+                this.Invoke(d, new object[] { username });
+            }
+            else
+            {
+                main_txtbx.Text = "ERROR: Specified user does not exist.";
+                message_txtbx.Enabled = false;
+                send_btn.Enabled = false;
+            }
+
+            return false;
         }
 
         private void send_btn_Click(object sender, EventArgs e)
@@ -179,6 +199,7 @@ namespace GUI_Client
 
                             NetworkController.SendMessage(sendIdentifier + identifier + message_to_send);
 
+                            NetworkController.RemoveListener("_usernotfound_");
                             NetworkController.RemoveListener("_pmkeys_");
                             NetworkController.RemoveListener(identifier);
                             break;
@@ -186,11 +207,17 @@ namespace GUI_Client
                         catch (Exception f)
                         {
                             NetworkController.RemoveListener("_pmkeys_");
+                            NetworkController.RemoveListener("_usernotfound_");
                             NetworkController.RemoveListener(identifier);
                             break;
                         }
                     }
             }
+
+        }
+
+        private void message_txtbx_TextChanged(object sender, EventArgs e)
+        {
 
         }
     }
