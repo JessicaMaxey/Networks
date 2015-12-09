@@ -181,7 +181,7 @@ namespace GUI_Client
                 else if (dialogresult == DialogResult.No)
                 {
                     string input = "Private Chatroom was declined.";
-                    NetworkController.SendMessage("_pm" + username + "_" + "_pm" + text + username + "_exit");
+                    NetworkController.SendMessage("_pm" + text + "_" + "_pm" + text + username + "_" + input);
                 }
             }
 
