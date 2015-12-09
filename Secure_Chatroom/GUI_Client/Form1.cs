@@ -218,7 +218,11 @@ namespace GUI_Client
                     e.Cancel = true;
                     break;
                 default:
-                    break;
+                    {
+                        string input = "exit";
+                        NetworkController.SendMessage(input);
+                        break;
+                    }
             }
 
         }
