@@ -100,6 +100,8 @@ namespace GUI_Client
 
                 this.Close();
             }
+
+            message_txtbx.Clear();
                  
         }
 
